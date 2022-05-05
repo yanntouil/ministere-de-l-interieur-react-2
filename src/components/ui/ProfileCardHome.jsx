@@ -29,7 +29,7 @@ const ProfileCardHome = ({ profile, }) => {
                     className="object-cover w-full h-full"
                 />
             </div>
-            <div className="relative w-[48rem] xl:w-[24rem] 2xl:w-[29rem] py-6 xl:py-2 px-8 font-light text-neutral-500">
+            <div className="relative lg:w-[48rem] xl:w-[24rem] 2xl:w-[29rem] py-6 xl:py-2 px-8 font-light text-neutral-500">
                 <div className="flex flex-col gap-1 mb-4">
                     <h2 className="text-[22px] font-medium text-neutral-800 pr-4">{profile.name}</h2>
                     <p className="font-light">
