@@ -1,0 +1,33 @@
+
+
+
+
+
+
+
+
+
+
+
+.text {
+    &-center {
+        text-align: center;
+    }
+    &-xs {
+        font-size: 14px;
+    }
+}
+.underline {
+    text-decoration: underline;
+}
+.link {
+    text-decoration: underline;
+    color: $link-color;
+    transition: color 200ms ease-in-out;
+    &:hover {
+        color: $primary-500;
+    }
+}
+.font-shelby {
+    font-family: "shelby", sans-serif;
+}

@@ -1,0 +1,35 @@
+
+
+
+
+
+
+
+
+.container {
+    &-2xl {
+        max-width: map-get($breakpoints, '2xl');
+    }
+    &-xl {
+        max-width: map-get($breakpoints, 'xl');
+    }
+    &-lg {
+        max-width: map-get($breakpoints, 'lg');
+    }
+    &-md {
+        max-width: map-get($breakpoints, 'md');
+    }
+    &-sm {
+        max-width: map-get($breakpoints, 'sm');
+    }
+    &-sm, &-md, &-lg, &-xl, &-2xl {
+        margin: 0 auto;
+        width: 100%;
+        @include media-max('2xl') {
+            padding-left: var(--padding);
+            padding-right: var(--padding);
+            
+        }
+    }
+}
+

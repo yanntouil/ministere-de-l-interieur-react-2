@@ -1,0 +1,44 @@
+
+
+
+
+.footer {
+    background-color: $background-color;
+    @include media-max('lg') {
+        .main-nav {
+            display: none;
+        }
+    }
+    &-logo {
+        position: relative;
+        display: block;
+        width: 200px; height: 50px;
+        margin: 25px auto 0;
+    }
+    &-bottom {
+        display: flex; justify-content: space-between; align-items: center;
+        max-width: map-get($breakpoints, '3xl');
+        margin: 0 auto;
+        padding: var(--padding);
+        font-size: 14px;
+        font-weight: 300;
+        color: $placeholder-color;
+        @include media-max('sm') {
+            flex-direction: column; justify-content: center; align-items: center;
+            gap: var(--padding);
+        }
+        &-renow, &-101 {
+            width: 100px;
+        }
+        &-renow-link {
+            display: flex;
+            width: 85px; height: 28px;
+        }
+        &-101 {
+            display: flex; justify-content: flex-end;
+            svg {
+                width: 96px; height: 17px;
+            }
+        }
+    }
+}

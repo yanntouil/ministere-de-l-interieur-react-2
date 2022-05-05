@@ -1,0 +1,39 @@
+/**
+ * Minitère de l'interieur - Main sass file
+ */
+
+// Abstract
+@import 'variables';
+@import 'mixins';
+@import 'functions';
+
+// Base
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/site';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Components
+@import 'components/container';
+@import 'components/padding';
+@import 'components/heading';
+@import 'components/form';
+@import 'components/flex';
+@import 'components/page-header';
+@import 'components/page-action';
+@import 'components/scrollbar';
+@import 'components/map';
+
+// Layout 
+@import 'layout/header';
+@import 'layout/mainnav';
+@import 'layout/main';
+@import 'layout/footer';
+
+// Pages
+@import 'pages/login';
+@import 'pages/form';
+@import 'pages/page-dashboard';

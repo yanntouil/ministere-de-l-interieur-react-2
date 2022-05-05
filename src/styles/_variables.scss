@@ -1,0 +1,33 @@
+
+
+
+// Breakpoint
+$breakpoints: (
+    'sm':   640px,
+    'md':   768px,
+    'lg':   1024px,
+    'xl':   1280px,
+    '2xl':  1536px,
+    '3xl':  1920px
+) !default;
+
+
+
+
+// Color
+$primary-500: #108DB2;
+$primary-600: #0E7695;
+
+$secondary-500: #EE7326;
+$highlight-500: #CE1537;
+$text-color: #242424;
+$text-secondary-color: #5d5d5d;
+$link-color: #5d5d5d;
+$disabled-color: #E5E5E2;
+
+
+
+$background-color: #F5F1E9;
+$white: #ffffff;
+$black: #000000;
+$placeholder-color: #ACACAC;

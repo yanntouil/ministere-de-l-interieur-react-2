@@ -1,0 +1,16 @@
+
+
+
+
+
+
+.page-action {
+    height: calc(var(--form-height) / 2);
+    & > * {
+        position: absolute; top: 0; left: 0;
+        transform: translateY(-50%);
+        @include media-max('2xl') {
+            left: var(--padding);
+        }
+    }
+}

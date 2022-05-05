@@ -1,0 +1,36 @@
+
+
+.page-login {
+    margin-bottom: 150px;
+    .title {
+        margin-top: 100px;
+        margin-bottom: 80px;
+        font-size: 55px;
+        font-weight: 800;
+        color: $secondary-500;
+        text-align: center;
+        @include media-max('sm') {
+            font-size: 36px;
+        }
+    }
+    .forgot-password {
+        display: flex; justify-content: flex-end;
+        margin-top: -8px;
+        font-size: 14px;
+        font-weight: 300;
+    }
+    .form-submit {
+        margin-top: 100px;
+    }
+    .container-2xl {
+        position: relative;
+    }
+    .arrow {
+        position: absolute; top: 0; left: 50px;
+        display: flex; justify-content: center; align-items: center;
+        width: 60px; height: 60px;
+        background-color: $primary-500;
+        transform: translateY(-50%);
+    }
+}
+

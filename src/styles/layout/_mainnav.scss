@@ -1,0 +1,217 @@
+
+
+
+
+
+
+
+
+.mainnav {
+    /**
+     * Responsive variables
+     */
+    --height: 65px;
+    --gap: 40px;
+    --actions-gap: 50px;
+    --font-size: 18px;
+    --line-height: 25px;
+    @include media-min('xl') {
+        --height: 65px;
+        --font-size: 18px;
+    }
+    @include media-max('xl') {
+        --height: 50px;
+        --font-size: 16px;
+    }
+    @include media-max('lg') {
+        --actions-gap: 40px;
+    }
+    @include media-max('sm') {
+        --actions-gap: 20px;
+        --font-size: 14px;
+    }
+
+    /**
+     * Main nav
+     */
+    position: relative; z-index: 10;
+    display: flex; align-items: stretch;
+    max-width: map-get($breakpoints, '3xl');
+    margin: 0 auto;
+    padding: var(--padding);
+    font-size: var(--font-size);
+    font-weight: 300;
+
+    /**
+     * Logo
+     */
+    &-logo {
+        position: relative;
+        width: calc(var(--height) * 4); height: var(--height);
+    }
+
+    @include media-min('lg') {
+
+        /**
+         * Mainmenu (Display on min lg)
+         */
+        .mainmenu {
+            flex-grow: 1;
+            display: flex; justify-content: center; align-items: stretch;
+            gap: var(--gap);
+            &-item {
+                display: flex; align-items: center;
+                &-link {
+                    display: flex; justify-content: center; align-items: center;
+                    width: 150px; height: var(--height);
+                    line-height: var(--line-height);
+                    &:hover {
+                        color: $primary-500;   
+                    }
+                    &.active {
+                        color: $primary-500;
+                        font-weight: 500;
+                        text-decoration: underline;
+                        text-underline-offset: 10px;
+                    }
+                }
+            }
+        }
+    
+        /**
+         * Actions (Display on min lg)
+         */
+        &-actions {
+            display: flex; justify-content: flex-end;
+            width: calc(var(--height) * 4);
+            gap: var(--actions-gap);
+            &-item {
+                --languages-width: 50px;
+                position: relative;
+                &-login {
+                    padding: 0 25px;
+                    &.active {
+                        color: $primary-500;
+                        font-weight: 500;
+                        text-decoration: underline;
+                        text-underline-offset: 10px;
+                    }
+                }
+                &-languages {
+                    width: var(--languages-width);
+                }
+                &-languages, &-login {
+                    display: flex; justify-content: center; align-items: center;
+                    height: var(--height);
+                    
+                    line-height: var(--line-height);
+                    &:hover {
+                        color: $primary-500;   
+                    }
+                }
+                .languages {
+                    --padding-y: 10px;
+                    position: absolute; top: calc((var(--height) - var(--line-height)) / 2 - var(--padding-y)); right: 0; left: 0;
+                    display: flex; flex-direction: column;
+                    background-color: $primary-500;
+                    padding: calc(var(--padding-y) / 2) 0;
+                    &-item-button {
+                        display: flex; justify-content: center;
+                        padding: calc(var(--padding-y) / 2) 0;
+                        color: $white;
+                        font-weight: 300;
+                        line-height: var(--line-height);
+                        width: var(--languages-width);
+                        &.active {
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+            // &-toggle {// (Hide on min lg)
+            //     position: relative;
+            //     @include media-min('lg') {
+            //         display: none;
+            //     }
+            //     @include media-max('lg') {
+            //         &-button {
+            //             display: flex; justify-content: center; align-items: center;
+            //             width: var(--height); height: var(--height);
+            //             background-color: $primary-500;
+            //             transition: color 300ms ease-in-out;
+            //             svg {
+            //                 width: 40%; height: 40%;
+            //                 color: $white;
+            //             }
+            //             &:hover, &:focus {
+            //                 background-color: $primary-600;
+            //             }
+            //         }
+            //     }
+            // }
+        }
+    }
+
+    /**
+     * Mobile menu (Display on max lg)
+     */
+    @include media-max('lg') {
+        &-backdrop {
+            position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 40;
+            background: rgba(#000000, .6);
+        }
+        &-actions {
+            position: relative; z-index: 40;
+            flex-grow: 1;
+            display: flex; justify-content: flex-end;
+            color: $white;
+            &-dropdown-close, &-mobile {
+                display: flex; justify-content: center; align-items: center;
+                width: var(--height); height: var(--height);
+                background-color: $primary-500;
+                svg {
+                    width: 40%; height: 40%;
+                }
+            }
+            &-dropdown {
+                position: absolute; top: 0; right: 0; z-index: 50;
+                display: flex; flex-direction: column; align-items: flex-end;
+                width: max-content;
+                background-color: $primary-500;
+                padding-top: 30px;
+                font-weight: 300;
+                font-size: 18px;
+                &-close {
+                    position: absolute; top: 0; right: 0;
+                }
+                .mainmenu {
+                    width: 100%;
+                    &-item {
+                        &-link {
+                            display: flex;
+                            padding: 10px 30px;
+                        }
+                    }
+                }
+                &-login {
+                    width: 100%;
+                    padding: 30px 30px;
+                }
+                .languages {
+                    display: grid; grid-template-columns: repeat(4, 1fr);
+                    padding: 20px;
+                    &-item-button {
+                        width: 50px;
+                        padding: 10px 0;
+                        text-align: center;
+                        font-weight: inherit;
+                        &.active {
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
