@@ -34,7 +34,7 @@ const translation = {
         'studio-101': "Made by Studio 101",
         'menu-home': "Startsäit",
         'menu-map': "Kaart",
-        'menu-dashboard': "Dasboard",
+        'menu-dashboard': "Dashboard",
         'menu-login': "Login",
         'open-menu': "Menü opmaachen",
         'close-menu': "Menü zoumaachen",
