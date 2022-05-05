@@ -281,7 +281,7 @@ const ProfileForm = ({ profile = initialProfile, close, save }) => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="form-submit sm:justify-end mb-[50px]">
+                            <div className="form-submit sm:justify-end my-[50px]">
                                 <button type="submit" className="btn btn-primary">{t('ui.profile-form.valid')}</button>
                             </div>
                         </form>
