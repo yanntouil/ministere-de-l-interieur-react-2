@@ -19,7 +19,7 @@ const Dashboard = () =>  {
     }
     const saveAddProfile = (formData) => {
         setAddForm(false)
-        console.log('profile added');
+        console.log('profile added', formData);
     }
     
     /**

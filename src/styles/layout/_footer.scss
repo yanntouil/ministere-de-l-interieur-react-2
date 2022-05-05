@@ -23,6 +23,9 @@
         font-size: 14px;
         font-weight: 300;
         color: $placeholder-color;
+        @include media-min('sm') {
+            padding: calc(var(--padding) * 0) var(--padding) var(--padding);
+        }
         @include media-max('sm') {
             flex-direction: column; justify-content: center; align-items: center;
             gap: var(--padding);
@@ -41,4 +44,8 @@
             }
         }
     }
+}
+
+.test {
+    font-weight: 300;
 }

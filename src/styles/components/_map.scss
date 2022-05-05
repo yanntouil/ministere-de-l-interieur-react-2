@@ -17,7 +17,44 @@
             }
         }
     }
+    .lux-popup {
+        width: 20rem;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 0px;
+        border-radius: 1rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        &-header {
+            display: none;
+        }
+        &-content {
+            padding: 0;
+            max-height: max-content;
+            .description {
+                height: 100%;
+                padding: 1rem;
+            }
+            img {
+                aspect-ratio: 16 / 6;
+                object-fit: cover;
+                width: 100%;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+            }
+            .name {
+                padding: 0.25rem 0.5rem 0;
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+            .address, .email, .phone {
+                display: flex;
+                padding: 0.25rem 0.5rem 0;
+                font-size: 1rem;
+            }
+        
+        }
 
+    }
 
 
 }

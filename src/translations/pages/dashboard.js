@@ -11,7 +11,7 @@ const translation = {
         'delete-message': "Êtes-vous sûr de vouloir supprimer cet établissement !",
         'delete-valid': "Supprimer",
         'delete-cancel': "Annuler",
-    }
+    },
 }
 
 translation.en = translation.fr

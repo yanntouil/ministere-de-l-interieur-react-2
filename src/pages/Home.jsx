@@ -12,7 +12,7 @@ import mapJSON from '../styles/map.json'
 
 
 
-export default function Home() {
+export default function Home({ profiles = businessProfiles}) {
     const resultMapRef = useRef(null);
     const mapRef = useRef(null);
 
@@ -27,15 +27,38 @@ export default function Home() {
     useEffect(() => {
         if (!resultMapRef.current) return;
         if (search.coord.length !== 2 ) return
-        console.log(search.coord)
-            mapRef.current = new luxmap.Map({
-                target: 'result-map',
-                bgLayer: 'basemap_2015_global',
-                bgLayerStyle: mapJSON,
-                zoom: 14,
+
+        mapRef.current = new luxmap.Map({
+            target: 'result-map',
+            bgLayer: 'basemap_2015_global',
+            bgLayerStyle: mapJSON,
+            zoom: 14,
+            positionSrs: 4326,
+            position: search.coord
+        })
+
+        profiles.forEach((profile, index) => {
+            mapRef.current.showMarker({
+                position: profile.coordinates,
+                positioning: 'center-center',
                 positionSrs: 4326,
-                position: search.coord
+                iconURL: '/images/location.svg',
+                html: `
+                <img
+                    className="cover"
+                    src="${profile.image}" 
+                    alt="${profile.name}" 
+                />
+                <div class="description">
+                    <h2 class="name">${profile.name}</h2>
+                    <p class="address">${profile.address}</p>
+                    <a class="phone" href="mailto:${profile.phone}">${t('ui.profile-card.phone')}&nbsp;: ${profile.phone}</a>
+                    <a class="email" href="mailto:${profile.email}">${t('ui.profile-card.email')}&nbsp;: ${profile.email}</a>
+                <div/>
+                `,
             })
+
+        })
 
         return () => {
             mapRef.current.setTarget(undefined)
@@ -72,7 +95,7 @@ export default function Home() {
                     <div className="lg:z-10">
                         <img
                             className="object-cover aspect-video lg:aspect-3/4"
-                            src="/images/business-profile/1.jpg" 
+                            src="/images/home.jpg" 
                             alt="Say yes" 
                         />
                     </div>
@@ -86,7 +109,7 @@ export default function Home() {
                                 <div className="flex gap-4 pb-12 flex-wrap sm:flex-nowrap">
                                     <h2 className="flex items-center w-full sm:w-auto text-3xl xl:text-2xl 2xl:text-4xl font-bold">{t('pages.home.result-title')}</h2>
                                     <div className="flex sm:justify-center items-center  grow font-thin">
-                                        129 resultats
+                                        {profiles.length + ' ' + t('pages.home.result-count')}
                                     </div>
                                     <button className="flex justify-center items-center w-12 h-12 shrink-0 bg-primary-500 hover:bg-primary-600 transition-colors duration-300 ease-in-out text-white">
                                         <svg className="w-5 h-5 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -102,7 +125,7 @@ export default function Home() {
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-8">
-                                    {businessProfiles.map((profile, index) => (
+                                    {profiles.map((profile, index) => (
                                         <ProfileCardHome
                                             key={`profile-${profile.id}`}
                                             profile={profile} 
