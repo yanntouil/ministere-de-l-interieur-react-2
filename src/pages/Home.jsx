@@ -134,7 +134,7 @@ export default function Home({ profiles = businessProfiles}) {
                                     ))}
                                 </div>
                             </div>
-                            <div className="aspect-video xl:aspect-auto 2xl:aspect-3/4">
+                            <div className="aspect-9/16 xl:aspect-auto 2xl:aspect-3/4">
                                 <div id="result-map" ref={resultMapRef} className="result-map" />
                             </div>
                         </div>
