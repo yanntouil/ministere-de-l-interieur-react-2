@@ -8,7 +8,7 @@ const translation = {
         'result-count': "résultats",
     },
     de: {
-        'page-title-1': "Sagen Sie",
+        'page-title-1': "Sagt",
         'page-title-2': "Ja",
         'page-title-3': "zum/am richigen Ort!",
         'page-secondary': "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
