@@ -119,7 +119,7 @@ const ProfileForm = ({ profile = initialProfile, close, save }) => {
                         </div>
                     </div>
                     <div className="relative bg-white px-[20px] sm:px-[100px]">
-                        <div className="page-action" aria-hidden="true">
+                        <div className="page-action relative" aria-hidden="true">
                             <span className="btn btn-primary btn-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
                                     <g transform="translate(213 -620) rotate(90)">

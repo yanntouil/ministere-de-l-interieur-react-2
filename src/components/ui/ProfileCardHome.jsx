@@ -50,7 +50,7 @@ const ProfileCardHome = ({ profile, }) => {
                             {ranges.map((range, index) => (
                                 <li key={`profile-${profile.id}-planning-${index}`}>
                                     <span className="pr-3">
-                                        { range.length > 1 ? `${t('ui.' + range[0])} à ${t('ui.' + range[range.length - 1])}` : t('ui.' + range[0]) }&nbsp;:
+                                        { range.length > 1 ? `${t('ui.' + range[0])} ${t('ui.profile-card.to')} ${t('ui.' + range[range.length - 1])}` : t('ui.' + range[0]) }&nbsp;:
                                     </span>
                                     <span className="inline-block">
                                         {shiftIsNull(range[0], profile, 'morning') ? '' : `${profile.planning[range[0]].morningFrom} - ${profile.planning[range[0]].morningTo}`}
