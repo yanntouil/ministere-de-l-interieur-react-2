@@ -75,7 +75,7 @@ export default function Home({ profiles = businessProfiles}) {
                     <div className="flex flex-col justify-center mt-12 lg:mt-0">
                         <div className="mb-12 lg:mb-24">
                             <h1 className="mb-6 font-black text-[35px] sm:text-[45px] lg:text-[55px] leading-[40px] sm:leading-[50px] lg:leading-[60px] text-secondary-500">
-                                <span className="flex pb-10">
+                                <span className="flex pb-10 gap-6">
                                     {t('pages.home.page-title-1')} <span className="font-shelby text-highlight-500 text-[85px] sm:text-[95px] lg:text-[115px] font-bold">{t('pages.home.page-title-2')}</span><br />
                                 </span>
                                 {t('pages.home.page-title-3')}
