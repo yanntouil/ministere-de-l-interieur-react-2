@@ -6,10 +6,12 @@ import ProfileCardHome from "../components/ui/ProfileCardHome"
 import businessProfiles from "../mock/businessProfiles"
 import mapJSON from '../styles/map.json'
 
-
-
-
-
+const sortProfile =  (profiles, rootCoord) => [ ...profiles ].sort((a, b) => getDistance(a.coordinates, rootCoord) - getDistance(b.coordinates, rootCoord))
+const getDistance = (a, b) => {
+    const x = a[0] - b[0];
+    const y = a[1] - b[1];
+    return Math.sqrt( x * x + y * y );
+}
 
 
 export default function Home({ profiles = businessProfiles}) {
@@ -64,6 +66,7 @@ export default function Home({ profiles = businessProfiles}) {
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ search.coord ])
+
 
     /**
      * Render
@@ -126,7 +129,7 @@ export default function Home({ profiles = businessProfiles}) {
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-8">
-                                    {profiles.map((profile, index) => (
+                                    {sortProfile(profiles, search.coord).map((profile, index) => (
                                         <ProfileCardHome
                                             key={`profile-${profile.id}`}
                                             profile={profile} 
