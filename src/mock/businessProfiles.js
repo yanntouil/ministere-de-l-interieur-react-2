@@ -6,8 +6,8 @@ const businessProfiles = [
     {
         id: uuid(),
         name: 'Administration Communale de la Ville de Luxembourg',
-        address: '42, place Guillaume II L-2090 Luxembourg',
-        coordinates: [6.131408610033372, 49.61031951288682],
+        address: '42, Place Guillaume II, L-1648 Luxembourg',
+        coordinates: [6.130489, 49.610269],
         email: 'contact@vdl.lu',
         phone: '+352 47 961',
         website: 'https://www.vdl.lu/',
@@ -67,7 +67,7 @@ const businessProfiles = [
     {
         id: uuid(),
         name: 'Waassertuerm Pomhouse (Musée)',
-        address: '1b Rue du Centenaire, 3475 Dudelange',
+        address: '1, Rue du Centenaire, L-3475 Dudelange',
         coordinates: [6.082642763049468, 49.47473130876126],
         email: 'info@cna.etat.lu',
         phone: '+352 52 24 24 507',
@@ -128,7 +128,7 @@ const businessProfiles = [
     {
         id: uuid(),
         name: 'Schloss Aspelt',
-        address: '37, Peiter Vun Uespelt-Strooss L-5710 Frisingen',
+        address: '37, Péiter vun Uespelt-Strooss, L-5710 Aspelt',
         coordinates: [6.2229912126167966, 49.52775353922813],
         email: 'info@amisduchateau-aspelt.lu',
         phone: '+352 2754 1',
@@ -189,7 +189,7 @@ const businessProfiles = [
     {
         id: uuid(),
         name: 'Kinneksbond',
-        address: '42, route d’Arlon L-8210 Mamer',
+        address: "42, Route d'Arlon, L-8210 Mamer",
         coordinates: [6.030902327500089, 49.62872107009215],
         email: 'info@kinneksbond.lu',
         phone: '+352 263 95 100',

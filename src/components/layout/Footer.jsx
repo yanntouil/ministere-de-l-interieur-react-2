@@ -55,7 +55,7 @@ const Footer = () => {
                 </div>
                 <div className="footer-bottom-101">
                     <a 
-                        className="footer-bottom-101"
+                        className="footer-bottom-101 opacity-50"
                         href="https://101.lu/"
                         target="blank"
                         rel="noopener noreferrer"

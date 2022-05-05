@@ -62,9 +62,14 @@ const FormPostcode = ({ onSubmit }) => {
         const postcode = target.value.trim().match(/(\d{4})/g)
         if (postcode) {
             try {
+                // const res2 = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&layer=Adresse&query=${postcode[0]}`)
+                // const data2 = await res2.json()
+                // console.log(data2.features)
                 const res = await fetch(`https://apiv3.geoportail.lu/geocode/search?zip=${postcode[0]}`)
                 const data = await res.json()
-                if (data.results.length === 0) return setFieldError(t('ui.form-postcode.errors.invalid-postcode'))
+                if (data.results.length === 0) {
+                    return setFieldError(t('ui.form-postcode.errors.invalid-postcode'))
+                }
                 setCoord(data.results[0].geomlonlat.coordinates)
             } catch (error) {
                 setFieldError(t('ui.form-postcode.errors.api-error'))
@@ -113,6 +118,7 @@ const FormPostcode = ({ onSubmit }) => {
                         autoComplete="do-not-autofill" 
                         value={value}
                         onChange={updateValue}
+                        onKeyUp={({ key }) => key === 'Enter' && onClick()}
                     />
                     <button 
                         className={`absolute inset-y-0 right-0 flex justify-end items-center px-8 ${geolocationPending ? 'text-blue-500 animate-ping' : geolocation ? 'text-green-500' : geolocationError ? 'text-red-500' : 'text-slate-500'}`}
@@ -121,10 +127,10 @@ const FormPostcode = ({ onSubmit }) => {
                         <svg className="w-7 h-7 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path className="stroke-current" d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5Z" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             <path className="stroke-current" d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path className="stroke-current" d="M12 4V2" stroke="#292D32" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path className="stroke-current" d="M4 12H2" stroke="#292D32" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path className="stroke-current" d="M12 20V22" stroke="#292D32" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path className="stroke-current" d="M20 12H22" stroke="#292D32" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path className="stroke-current" d="M12 4V2" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path className="stroke-current" d="M4 12H2" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path className="stroke-current" d="M12 20V22" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path className="stroke-current" d="M20 12H22" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
                 </div>

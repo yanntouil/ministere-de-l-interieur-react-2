@@ -57,7 +57,6 @@ export default function Home({ profiles = businessProfiles}) {
                 <div/>
                 `,
             })
-
         })
 
         return () => {
@@ -92,16 +91,16 @@ export default function Home({ profiles = businessProfiles}) {
                             </div>
                         </div>
                     </div>
-                    <div className="lg:z-10">
+                    <div className="lg:z-10 aspect-video lg:aspect-3/4">
                         <img
-                            className="object-cover aspect-video lg:aspect-3/4"
+                            className="object-cover w-full h-full"
                             src="/images/home.jpg" 
                             alt="Say yes" 
                         />
                     </div>
                 </div>
             </div>
-            {search.coord.length === 2 && (
+            {search.coord.length === 2 ? (
                 <div className="bg-white relative z-0 lg:-mt-24 lg:pt-36">
                     <div className="w-full max-w-screen-2xl mx-auto px-[30px] sm:px-[40px] xl:px-[50px] 2xl:px-0 py-[50px]">
                         <div className="grid xl:grid-cols-2 gap-12">
@@ -139,6 +138,8 @@ export default function Home({ profiles = businessProfiles}) {
                         </div>
                     </div>
                 </div>
+            ) : (
+                <div className="h-12" />
             )}
         </div>
     )
