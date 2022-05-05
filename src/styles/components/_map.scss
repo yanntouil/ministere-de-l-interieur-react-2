@@ -33,6 +33,7 @@
             .description {
                 height: 100%;
                 padding: 1rem;
+                font-family: 'Poppins', sans-serif;
             }
             img {
                 aspect-ratio: 16 / 6;
@@ -43,7 +44,7 @@
             }
             .name {
                 padding: 0.25rem 0.5rem 0;
-                font-weight: bold;
+                font-weight: 500;
                 font-size: 1.2rem;
             }
             .address, .email, .phone {
