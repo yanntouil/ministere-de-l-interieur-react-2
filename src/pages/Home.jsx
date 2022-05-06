@@ -47,7 +47,7 @@ export default function Home({ profiles = businessProfiles}) {
             target: 'result-map',
             bgLayer: 'basemap_2015_global',
             bgLayerStyle: mapJSON,
-            zoom: 14,
+            zoom: 13,
             positionSrs: 4326,
             position: search.coordinates
         })
