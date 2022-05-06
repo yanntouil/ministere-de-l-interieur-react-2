@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useMedia } from "../app/hooks"
-import FormPostcode from "../components/ui/FormPostcode"
 import FormSearchAutocomplete from "../components/ui/FormSearchAutocomplete"
 import ProfileCardHome from "../components/ui/ProfileCardHome"
 import businessProfiles from "../mock/businessProfiles"
@@ -13,31 +12,44 @@ const getDistance = (a, b) => {
     const y = a[1] - b[1];
     return Math.sqrt( x * x + y * y );
 }
+const profileOnPage = (profiles, page, entriesPerPage) => profiles.slice((page - 1) * entriesPerPage, page * entriesPerPage)
 
 
 export default function Home({ profiles = businessProfiles}) {
     const resultMapRef = useRef(null);
     const mapRef = useRef(null);
-
     const luxmap = window.lux
     const media = useMedia()
+
+    const [ page, setPage ] = useState(1)
+
+    const entriesPerPage = 3
+    
     const { t, i18n } = useTranslation()
     const [ search, setSearch ] = useState({
-        postcode: '',
-        coord: [],
+        label: '',
+        coordinates: [],
     })
 
     useEffect(() => {
         if (!resultMapRef.current) return;
-        if (search.coord.length !== 2 ) return
+        if (search.coordinates.length !== 2 ) return
 
+        /**
+         * Profile filter and sort
+         */
+        //setTotalPage(Math.ceil(profilesSort.length / entriesPerPage))
+    
+        /**
+         * Maps
+         */
         mapRef.current = new luxmap.Map({
             target: 'result-map',
             bgLayer: 'basemap_2015_global',
             bgLayerStyle: mapJSON,
             zoom: 14,
             positionSrs: 4326,
-            position: search.coord
+            position: search.coordinates
         })
 
         profiles.forEach((profile, index) => {
@@ -66,7 +78,7 @@ export default function Home({ profiles = businessProfiles}) {
             mapRef.current.setTarget(undefined)
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ search.coord ])
+    }, [ search.coordinates ])
 
 
     /**
@@ -89,20 +101,20 @@ export default function Home({ profiles = businessProfiles}) {
                                 <a href="#" className="underline hover:text-primary-500 transition-colors duration-300 ease-in-out">www.XXX.lu</a>
                             </p>
                         </div>
-                        {/* <div className="relative">
+                        <div className="relative">
                             <div className="lg:absolute lg:z-20 lg:top-0 lg:left-0" style={{width: media.min('lg') ? 'calc(100% + 50px + 95px)' : '100%'}}>
                                 <FormSearchAutocomplete
-                                    onSubmit={(value) => setSearch(value)}
+                                    onSubmit={setSearch}
                                 />
                             </div>
-                        </div> */}
-                        <div className="relative">
+                        </div>
+                        {/* <div className="relative">
                             <div className="lg:absolute lg:z-20 lg:top-0 lg:left-0" style={{width: media.min('lg') ? 'calc(100% + 50px + 95px)' : '100%'}}>
                                 <FormPostcode
                                     onSubmit={(value) => setSearch(value)}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="lg:z-10 aspect-video lg:aspect-3/4">
                         <img
@@ -113,7 +125,7 @@ export default function Home({ profiles = businessProfiles}) {
                     </div>
                 </div>
             </div>
-            {search.coord.length === 2 ? (
+            {search.coordinates.length === 2 ? (
                 <div className="bg-white relative z-0 lg:-mt-24 lg:pt-36">
                     <div className="w-full max-w-screen-2xl mx-auto px-[30px] sm:px-[40px] xl:px-[50px] 2xl:px-0 py-[50px]">
                         <div className="grid xl:grid-cols-2 gap-12">
@@ -123,13 +135,23 @@ export default function Home({ profiles = businessProfiles}) {
                                     <div className="flex sm:justify-center items-center grow shrink-0 h-12 font-thin">
                                         {profiles.length + ' ' + t('pages.home.result-count')}
                                     </div>
-                                    <button className="flex justify-center items-center w-12 h-12 shrink-0 bg-primary-500 hover:bg-primary-600 transition-colors duration-300 ease-in-out text-white">
+                                    <button 
+                                        className={`flex justify-center items-center w-12 h-12 shrink-0 transition-colors duration-300 ease-in-out text-white ${ page === 1 ? 'bg-neutral-500 cursor-auto' : 'bg-primary-500 hover:bg-primary-600 cursor-pointer'}`}
+                                        onClick={() => setPage(
+                                            Math.max(1, (page - 1))
+                                        )}
+                                    >
                                         <svg className="w-5 h-5 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path className="stroke-current" d="M9.57 5.92993L3.5 11.9999L9.57 18.0699" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                                             <path className="stroke-current" d="M20.5 12H3.67004" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
                                     </button>
-                                    <button className="flex justify-center items-center w-12 h-12 shrink-0 bg-primary-500 hover:bg-primary-600 transition-colors duration-300 ease-in-out text-white">
+                                    <button 
+                                        className={`flex justify-center items-center w-12 h-12 shrink-0 transition-colors duration-300 ease-in-out text-white ${ page === Math.ceil(profiles.length / entriesPerPage) ? 'bg-neutral-500 cursor-auto' : 'bg-primary-500 hover:bg-primary-600 cursor-pointer'}`}
+                                        onClick={() => setPage(
+                                            Math.min((page + 1), Math.ceil(profiles.length / entriesPerPage))
+                                        )}
+                                    >
                                         <svg className="w-5 h-5 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path className="stroke-current" d="M14.4301 5.92993L20.5001 11.9999L14.4301 18.0699" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                                             <path className="stroke-current" d="M3.5 12H20.33" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
@@ -137,9 +159,9 @@ export default function Home({ profiles = businessProfiles}) {
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-8">
-                                    {sortProfile(profiles, search.coord).map((profile, index) => (
+                                    {profileOnPage( sortProfile( profiles, search.coordinates ), page, entriesPerPage ).map((profile, index) => (
                                         <ProfileCardHome
-                                            key={`profile-${profile.id}`}
+                                            key={`profile-${index}`}
                                             profile={profile} 
                                         />
                                     ))}

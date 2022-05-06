@@ -10,7 +10,7 @@ import { useOnClickOutside } from '../../app/hooks'
  */
 const FormSearchAutocomplete = ({ onSubmit }) => {
     const  { t } = useTranslation()
-    const [ coord, setCoord ] = useState([])
+    const [ coordinates, setCoordinates ] = useState([])
     const [ fieldError, setFieldError ] = useState(false)
 
     const [hoverOption, setHoverOption] = useState(-1)
@@ -34,12 +34,12 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                 const data = await res.json()
                 if (data.results.length === 0) return locationError('position-unavailable')
                 const coord = data.results[0].geomlonlat.coordinates
-                const postcode = 'L-' + data.results[0].postal_code
+                const label = `${data.results[0].number}, ${data.results[0].street}, L-${data.results[0].postal_code} ${data.results[0].locality}`
                 setGeolocationPending(false)
                 setGeolocation(true)
-                setCoord(coord)
-                setSearch(postcode)
-                onSubmit({ postcode, coord})
+                setCoordinates(coord)
+                setSearch(label)
+                onSubmit({ label, coordinates: coord})
             } catch (error) {
                 return locationError('position-unavailable')
             }
@@ -64,6 +64,8 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
         openDropdown()
         let options = []
         const postcode = target.value.trim().match(/((?:L)[-])?(\d{4})/g)
+
+        
         try {
             if (postcode) {
                 const res = await fetch(`https://apiv3.geoportail.lu/geocode/search?zip=${postcode[0]}`)
@@ -111,12 +113,12 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
      */
     const [ options, setOptions ] = useState([])
     const optionsRef = useRef([])
-    const selectOption = (option, andSubmit = false) => {
+    const selectOption = (option) => {
         searchRef.current.focus()
         setDropdown(false)
         setSearch(option.label)
-        setCoord(option.coordinates)
-        if (andSubmit) onSubmit({
+        setCoordinates(option.coordinates)
+        onSubmit({
             label: option.label,
             coordinates: option.coordinates,
         })
@@ -125,7 +127,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
         setGeolocation(false)
         setGeolocationError(false)
         setFieldError('')
-        setCoord([])
+        setCoordinates([])
     }
 
     /**
@@ -140,7 +142,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
     const closeDropdown = useCallback(() => {
         setDropdown(false)
         setOptions([])
-        console.log('close dropdown');
+        setHoverOption(-1)
     }, [options, search])
 
     /**
@@ -149,7 +151,13 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
     const manageKeyboard = (e) => {
         if (!['Escape', 'Enter', 'ArrowDown', 'ArrowUp'].includes(e.key)) return
         if (e.key === 'Escape') return closeDropdown()// Escape => Close
-        if (e.key === 'Enter') return options[hoverOption] && selectOption(options[hoverOption])// Enter => Select option or do nothing
+        if (e.key === 'Enter') {// Enter => Select option or do nothing
+            if (options[hoverOption]) {
+                e.preventDefault()
+                return selectOption(options[hoverOption])
+            }
+            else return
+        }
         e.preventDefault()
         openDropdown()
         // Options navigation
@@ -167,13 +175,14 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
     }
     
     /**
-     * Valid form
+     * Valid form before submit
      */
-    const onClick = () => {
-        if( coord.length !== 2) return setFieldError(t('ui.form-postcode.errors.invalid-position'))
+    const beforeSubmit = (e) => {
+        e?.preventDefault()
+        if( coordinates.length !== 2) return setFieldError(t('ui.form-postcode.errors.invalid-position'))
         onSubmit({
             label: search,
-            coordinates: coord,
+            coordinates: coordinates,
         })
     }
 
@@ -181,9 +190,13 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
      * Render
      */
     return (
-        <form className="relative">
-            <div className="flex flex-col sm:flex-row w-full gap-6 sm:gap-0">
-                <div className="relative  w-full">
+        <form 
+            className="flex flex-col items-stretch" 
+            onSubmit={beforeSubmit}
+            autoComplete="off" 
+        >
+            <div className="flex flex-col items-stretch sm:flex-row gap-6 sm:gap-0">
+                <div className="relative grow">
                     <div className="relative w-full">
                         <label htmlFor="search" className="absolute inset-y-0 left-0 flex justify-center items-center px-8">
                             <svg className="w-6 h-6 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -196,16 +209,17 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                             id="search"
                             className="w-full h-20 px-24 bg-white shadow-form"
                             placeholder={t('ui.form-postcode.placeholder')}
-                            autoComplete="do-not-autofill" 
+                            autoComplete="off" 
                             ref={searchRef}
                             value={search}
+                            onBlur={() => setTimeout(closeDropdown , 200)}
                             onChange={updateSearch}
                             onFocus={openDropdown}
-                            onBlur={closeDropdown}
                             onKeyDown={manageKeyboard}
                         />
                         <button 
                             className={`absolute inset-y-0 right-0 flex justify-end items-center px-8`}
+                            type="button"
                             onClick={getGeolocation}
                         >
                             <svg className={`w-7 h-7 stroke-current ${geolocationPending ? 'text-blue-500 animate-ping' : geolocation ? 'text-green-500' : geolocationError ? 'text-red-500' : 'text-slate-500'}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -224,9 +238,10 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                                 <li key={`address-option-${index}`}>
                                     <button 
                                         className={`w-full px-[40px] py-4 text-left cursor-pointer ${index === hoverOption ? 'bg-gray-100' : '' }`}
+                                        type="button"
                                         tabIndex="-1"
                                         ref={(el) => optionsRef.current[index] = el}
-                                        onClick={() => selectOption(option)}
+                                        onClick={(e) => selectOption(option)}
                                         onMouseEnter={() => setHoverOption(index)}
                                         onMouseLeave={() => setHoverOption(-1)}
                                     >
@@ -239,7 +254,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                 </div>
                 <button 
                     className="h-20 shrink-0 px-12 bg-primary-500 hover:bg-primary-600 text-center text-white transition-colors duration-300 ease-in-out"
-                    onClick={onClick}
+                    type="submit"
                 >
                     {t('ui.form-postcode.button')}
                 </button>

@@ -109,7 +109,7 @@ const FormAddressAutocomplete = ({ placeholder, value, setValue }) => {
                 type="text"
                 className="form-control"
                 placeholder={placeholder}
-                autoComplete="do-not-autofill" 
+                autoComplete="do-not-autofill"
                 ref={searchRef}
                 value={search}
                 onChange={updateSearch}
