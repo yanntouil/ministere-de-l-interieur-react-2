@@ -93,6 +93,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                 const queryString = encodeURIComponent(target.value)
                 const res = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&layer=Adresse&query=${queryString}`)
                 const data = await res.json()
+                // console.log(data.results.length);
                 const addresses = data.features
                     .filter(feature => feature.properties.layer_name === 'Adresse')
                     .map(feature => ({ 
@@ -113,6 +114,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
     const [ options, setOptions ] = useState([])
     const optionsRef = useRef([])
     const selectOption = (option) => {
+        console.log('selectOption');
         searchRef.current.focus()
         setDropdown(false)
         setSearch(option.label)
@@ -142,6 +144,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
         setDropdown(false)
         setOptions([])
         setHoverOption(-1)
+        // console.log('close dropdown');
     }, [options, search])
 
     /**
