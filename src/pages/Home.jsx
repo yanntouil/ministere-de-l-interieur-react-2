@@ -98,7 +98,12 @@ export default function Home({ profiles = businessProfiles}) {
                             </h1>
                             <p className="lg:max-w-[500px] text-stone-500 font-light sm:text-[18px]">
                                 {t('pages.home.page-secondary')}
-                                <a href="#" className="underline hover:text-primary-500 transition-colors duration-300 ease-in-out">www.XXX.lu</a>
+                                    <a href={
+                                        (i18n.language === 'fr') ? 'https://mint.gouvernement.lu/fr/dossiers/2022/ceremonies-civiles.html' :
+                                        (i18n.language === 'de') ? 'https://mint.gouvernement.lu/de/dossiers/2022/ceremonies-civiles.html' :
+                                        (i18n.language === 'lu') ? 'https://mint.gouvernement.lu/lb/dossiers/2022/ceremonies-civiles.html' :
+                                        'https://mint.gouvernement.lu/en/dossiers/2022/ceremonies-civiles.html'
+                                    } target="_blank" rel="noreferrer noopener" className="underline hover:text-primary-500 transition-colors duration-300 ease-in-out">{t('pages.home.page-secondary-link')}</a>
                             </p>
                         </div>
                         <div className="relative">
