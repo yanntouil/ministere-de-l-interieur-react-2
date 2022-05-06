@@ -163,6 +163,7 @@ export default function Home({ profiles = businessProfiles}) {
                                         <ProfileCardHome
                                             key={`profile-${index}`}
                                             profile={profile} 
+                                            displayOnMap={() => setSearch({label: profile.name, coordinates: profile.coordinates})}
                                         />
                                     ))}
                                 </div>

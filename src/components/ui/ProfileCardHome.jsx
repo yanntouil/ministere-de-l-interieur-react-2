@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next"
 
 
 
-const ProfileCardHome = ({ profile, }) => {
+const ProfileCardHome = ({ profile, displayOnMap }) => {
     const { t } = useTranslation()
 
     /**
@@ -31,18 +31,25 @@ const ProfileCardHome = ({ profile, }) => {
             </div>
             <div className="relative lg:w-[48rem] xl:w-[24rem] 2xl:w-[29rem] py-6 xl:py-2 px-8 font-light text-neutral-500">
                 <div className="flex flex-col gap-1 mb-4">
-                    <h2 className="text-[22px] font-medium text-neutral-800 pr-4">{profile.name}</h2>
+                    <h2 className="text-[22px] font-medium text-neutral-800 pr-4 cursor-pointer" onClick={displayOnMap}>{profile.name}</h2>
                     <p className="font-light">
                         {profile.address}
                     </p>
                 </div>
                 <ul className="flex flex-col gap-2">
+                    {profile.website && (
+                        <li>
+                            <span className="font-medium text-neutral-800 pr-3">{t('ui.profile-card.website')}&nbsp;:</span>
+                            <a href={profile.website} target="_blank" rel="noreferrer noopener" className="inline-block">{profile.website}</a>
+                        </li>
+                    )}
                     <li>
                         <span className="font-medium text-neutral-800 pr-3">{t('ui.profile-card.email')}&nbsp;:</span>
-                        <a href={`mailto:${profile.email}`} className="inline-block">{profile.email}</a></li>
+                        <a href={`mailto:${profile.email}`} className="inline-block">{profile.email}</a>
+                    </li>
                     <li>
                         <span className="font-medium text-neutral-800 pr-3">{t('ui.profile-card.phone')}&nbsp;:</span>
-                        <span className="inline-block">{profile.phone}</span>
+                        <a className="inline-block" href={`tel:${profile.phone}`}>{profile.phone}</a>
                     </li>
                     <li className="flex flex-col gap-2">
                             <h3 className="font-medium text-neutral-800">{t('ui.profile-card.planning')}&nbsp;:</h3>

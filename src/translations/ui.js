@@ -5,6 +5,7 @@
 const translation = {
     fr: {
         'profile-card': {
+            'website': "Site web",
             'email': "E-mail",
             'phone': "Téléphone",
             'planning': "Horaires",
@@ -59,6 +60,7 @@ const translation = {
     },
     de: {
         'profile-card': {
+            'website': "Website",
             'email': "Email",
             'phone': "Telefon",
             'planning': "Zeitplan",
@@ -113,6 +115,7 @@ const translation = {
     },
     lu: {
         'profile-card': {
+            'website': "Website",
             'email': "Email",
             'phone': "Telefon",
             'planning': "Zäitplang",
@@ -167,6 +170,7 @@ const translation = {
     },
     en: {
         'profile-card': {
+            'website': "Website",
             'email': "Email",
             'phone': "Phone number",
             'planning': "Timetable",
