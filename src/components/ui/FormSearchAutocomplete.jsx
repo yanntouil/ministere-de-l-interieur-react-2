@@ -85,7 +85,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                     .filter(feature => feature.properties.layer_name === 'Localité')
                     .map(feature => ({ 
                         label: feature.properties.label,
-                        coordinates: feature.geometry.coordinates 
+                        coordinates: feature.geometry.type === 'Polygon' ? feature.geometry.coordinates[0][0] : feature.geometry.coordinates
                     }))
                 options = [ ...options, ...addresses]
             }
@@ -98,7 +98,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                     .filter(feature => feature.properties.layer_name === 'Adresse')
                     .map(feature => ({ 
                         label: feature.properties.label, 
-                        coordinates: feature.geometry.coordinates 
+                        coordinates: feature.geometry.type === 'Polygon' ? feature.geometry.coordinates[0][0] : feature.geometry.coordinates
                     }))
                 options = [ ...options, ...addresses]
             }
@@ -114,7 +114,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
     const [ options, setOptions ] = useState([])
     const optionsRef = useRef([])
     const selectOption = (option) => {
-        console.log('selectOption');
+        console.log('selectOption', option);
         searchRef.current.focus()
         setDropdown(false)
         setSearch(option.label)
@@ -235,7 +235,7 @@ const FormSearchAutocomplete = ({ onSubmit }) => {
                         </button>
                     </div>
                     {dropdown && options.length > 0 && (
-                        <ul className="absolute top-full right-0 left-0 overflow-y-auto scrollbar max-h-40 flex flex-col bg-white shadow-md" ref={dropdownRef}>
+                        <ul className="absolute z-40 top-full right-0 left-0 overflow-y-auto scrollbar max-h-40 flex flex-col bg-white shadow-md" ref={dropdownRef}>
                             {options.map((option, index) => (
                                 <li key={`address-option-${index}`}>
                                     <button 

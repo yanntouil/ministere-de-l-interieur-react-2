@@ -4,7 +4,7 @@
 const translation = {
     fr: {
         'page-title': "Connectez-vous",
-        'page-secondary': "Dëse Login ass nëmmen fir Gemengen déi hir Etablissementer / Plazen um Site androen.",
+        'page-secondary': "Ce login est réservé aux communes qui gèrent leurs établissements sur le site.",
         'username': "E-mail ou nom d’utilisateur",
         'password': "Mot de passe",
         'display-password': "Afficher le mot de passe",
@@ -13,7 +13,7 @@ const translation = {
     },
     de: {
         'page-title': "Melden Sie sich an",
-        'page-secondary': "Dëse Login ass nëmmen fir Gemengen déi hir Etablissementer / Plazen um Site androen.",
+        'page-secondary': "Dieser Login ist Gemeinden vorbehalten, die ihre Einrichtungen auf der Webseite verwalten.",
         'username': "Email oder Benutzername",
         'password': "Passwort",
         'display-password': "Passwort anzeigen",
@@ -31,7 +31,7 @@ const translation = {
     },
     en: {
         'page-title': "Log in",
-        'page-secondary': "Dëse Login ass nëmmen fir Gemengen déi hir Etablissementer / Plazen um Site androen.",
+        'page-secondary': "This login is reserved for municipalities that manage their locations on the website.",
         'username': "Email or username",
         'password': "Password",
         'display-password': "Show password",
