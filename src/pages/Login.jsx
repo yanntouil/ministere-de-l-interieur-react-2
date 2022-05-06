@@ -39,7 +39,10 @@ export default function Login() {
      */
     return (
         <div className="page-login max-w-xl mx-8 sm:mx-auto">
-            <h1 className="title">{t('pages.login.page-title')}</h1>
+            <div className="mt-24 mb-24">
+                <h1 className=" mb-6 font-black text-center text-[35px] sm:text-[45px] lg:text-[55px] leading-[40px] sm:leading-[50px] lg:leading-[60px] text-secondary-500">{t('pages.login.page-title')}</h1>
+                <p className="text-stone-500 font-light sm:text-[18px]">{t('pages.login.page-secondary')}</p>
+            </div>
             <form name="login" onSubmit={onSubmit}>
 
                 <div className="input-group form-group">

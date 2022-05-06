@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useOnClickOutside } from '../../app/hooks'
 
 
@@ -7,93 +8,102 @@ import { useOnClickOutside } from '../../app/hooks'
 /**
  * Form Address Autocomplete
  */
-const FormSearchAutocomplete = ({ placeholder, value, setValue }) => {
+const FormSearchAutocomplete = ({ onSubmit }) => {
+    const  { t } = useTranslation()
+    const [ coord, setCoord ] = useState([])
+    const [ fieldError, setFieldError ] = useState(false)
+
     const [hoverOption, setHoverOption] = useState(-1)
     const [searchError, setSearchError] = useState('')
     
-    const [geolocation, setGeolocation] = useState(false)
-    const [geolocationPending, setGeolocationPending] = useState(false)
 
     /**
      * Geolocation
      */
+    const [geolocation, setGeolocation] = useState(false)
+    const [geolocationPending, setGeolocationPending] = useState(false)
+    const [geolocationError, setGeolocationError] = useState(false)
     const getGeolocation = () => {
+        reset()
         setGeolocationPending(true)
-        if (!('geolocation' in navigator)) return locationError('SERVICE_UNAVAILABLE')
+        if (!('geolocation' in navigator)) return locationError('service-unavailable')
         navigator.geolocation.getCurrentPosition(async ({ coords }) => {
             const api = 'https://apiv3.geoportail.lu/geocode/reverse'
             try {
                 const res = await fetch(`${api}?lon=${coords.longitude}&lat=${coords.latitude}`)
                 const data = await res.json()
-                if (data.results.length === 0) return locationError('POSITION_UNAVAILABLE')
+                if (data.results.length === 0) return locationError('position-unavailable')
+                const coord = data.results[0].geomlonlat.coordinates
+                const postcode = 'L-' + data.results[0].postal_code
                 setGeolocationPending(false)
-                setGeolocation(data.results[0].geomlonlat.coordinates)
-                // add set value
+                setGeolocation(true)
+                setCoord(coord)
+                setSearch(postcode)
+                onSubmit({ postcode, coord})
             } catch (error) {
-                return locationError('POSITION_UNAVAILABLE')
+                return locationError('position-unavailable')
             }
-        }, (error) => (error.code === 1) ? locationError('PERMISSION_DENIED') : locationError('POSITION_UNAVAILABLE'))
+        }, (error) => locationError(error.code === 1 ? 'permission-denied' : 'position-unavailable'))
     }
     const locationError = (error) => {
         setGeolocationPending(false)
-        setSearchError('Error message')// SERVICE_UNAVAILABLE POSITION_UNAVAILABLE PERMISSION_DENIED
+        setGeolocationError(true)
+        setFieldError(t('ui.form-postcode.errors.' + error))
     }
 
     /**
      * Search
      */    
     const searchRef = useRef(null)
-     const [search, setSearch] = useState(value)
-     const [apiError, setApiError] = useState(false)
-     const updateSearch = async ({ target }) => {
+    const [search, setSearch] = useState('')
+    const [apiError, setApiError] = useState(false)
+    const updateSearch = async ({ target }) => {
         // add lodash throttle to delay requests
+        reset()
         setSearch(target.value)
-        setApiError(false)
         openDropdown()
-        const postcode = target.value.trim().match(/((?:L)[-])?(\d{4})/g)
         let options = []
-        if (postcode) {
-            try {
-                const res = await fetch(`https://apiv3.geoportail.lu/geocode/search?zip=${postcode}`)
-                const data = await res.json()
-                if (data)
-                console.log(data);
-            } catch (error) {
-                setApiError(true)
-            }
-        }
-
-        return
-
-
-        const queryString = encodeURIComponent(target.value)
-        const api = 'https://map.geoportail.lu/fulltextsearch'
-        const limit = 10
+        const postcode = target.value.trim().match(/((?:L)[-])?(\d{4})/g)
         try {
-            if (true) return 
-            const res = await fetch(`${api}?limit=${limit}&query=${queryString}`)
-            const data = await res.json()
-            const layers = ['Adresse', 'Localité', 'Commune']
-            const features = data.features.filter((feature) => layers.includes(feature.properties.layer_name))
-            
-            
-            //console.log(features.map(feature => [feature.properties.label, feature.properties.layer_name]))
-            /*
-                # Recherche de code postal
-                1) faire une recherche dans l'adresse
-                2) Recupere le 1er resultat et faire une recherche avec le nom de la commune
-            */
-
-
-            setOptions(features)
-            setApiError(false)
-
+            if (postcode) {
+                const res = await fetch(`https://apiv3.geoportail.lu/geocode/search?zip=${postcode[0]}`)
+                const data = await res.json()
+                if (!!data.results[0].geom) {
+                    options.push({
+                        label: data.results[0].address.replace(',', ', '), 
+                        coordinates: data.results[0].geomlonlat.coordinates
+                    })
+                    setOptions({label: data.results[0].address, coordinates: data.results[0].geomlonlat.coordinates})
+                }
+            } else {
+                const queryString = encodeURIComponent(target.value)
+                const res = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&query=${queryString}`)
+                const data = await res.json()
+                const addresses = data.features
+                    .filter(feature => feature.properties.layer_name === 'Localité')
+                    .map(feature => ({ 
+                        label: feature.properties.label,
+                        coordinates: feature.geometry.coordinates 
+                    }))
+                options = [ ...options, ...addresses]
+            }
+            if (target.value) {
+                const queryString = encodeURIComponent(target.value)
+                const res = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&layer=Adresse&query=${queryString}`)
+                const data = await res.json()
+                // console.log(data.results.length);
+                const addresses = data.features
+                    .filter(feature => feature.properties.layer_name === 'Adresse')
+                    .map(feature => ({ 
+                        label: feature.properties.label, 
+                        coordinates: feature.geometry.coordinates 
+                    }))
+                options = [ ...options, ...addresses]
+            }
+            setOptions(options)
         } catch (error) {
-            setApiError(true)
+            setFieldError(t('ui.form-postcode.errors.api-error'))
         }
-        if (target.value === '') return setValue('', [])
-        const option = options.find((option) => option.properties.label === target.value)
-        if (option) setValue(option.properties.label, option.geometry.coordinates)
     }
 
     /** 
@@ -101,11 +111,21 @@ const FormSearchAutocomplete = ({ placeholder, value, setValue }) => {
      */
     const [ options, setOptions ] = useState([])
     const optionsRef = useRef([])
-    const selectOption = (option) => {
+    const selectOption = (option, andSubmit = false) => {
         searchRef.current.focus()
         setDropdown(false)
-        setValue(option.properties.label, option.geometry.coordinates)
-        setSearch(option.properties.label)
+        setSearch(option.label)
+        setCoord(option.coordinates)
+        if (andSubmit) onSubmit({
+            label: option.label,
+            coordinates: option.coordinates,
+        })
+    }
+    const reset = () => {
+        setGeolocation(false)
+        setGeolocationError(false)
+        setFieldError('')
+        setCoord([])
     }
 
     /**
@@ -120,37 +140,23 @@ const FormSearchAutocomplete = ({ placeholder, value, setValue }) => {
     const closeDropdown = useCallback(() => {
         setDropdown(false)
         setOptions([])
-        const option = options.find((option) => option.properties.label === search)
-        if (option) setValue(option.properties.label, option.geometry.coordinates)
-        else setSearch('')
-    }, [options, search, setValue])
-
-    /**
-     * Clear value from parent component
-     */
-    useEffect(() => {
-        if (value === '') setSearch('')
-    }, [value])
+        console.log('close dropdown');
+    }, [options, search])
 
     /**
      * Keyboard management
      */
     const manageKeyboard = (e) => {
-        if (!['Escape', 'Enter', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return
+        if (!['Escape', 'Enter', 'ArrowDown', 'ArrowUp'].includes(e.key)) return
         if (e.key === 'Escape') return closeDropdown()// Escape => Close
-        if (e.key === 'Enter') {// Enter => Select option or do nothing
-            const option = options.find((option) => option.id === hoverOption)
-            return option && selectOption(option)
-        }
+        if (e.key === 'Enter') return options[hoverOption] && selectOption(options[hoverOption])// Enter => Select option or do nothing
         e.preventDefault()
         openDropdown()
         // Options navigation
-        let index = options.findIndex((option) => option.id === hoverOption)
+        let index = hoverOption
         if (e.key === "ArrowDown") index = (index + 1 === options.length) ? 0 : index + 1
         else if (e.key === "ArrowUp") index = (index - 1 < 0) ? options.length -1 : index - 1
-        else if (e.key === "Home") index = 0 
-        else if (e.key === "End") index = options.length -1
-        setHoverOption(options[Math.max(0, index)].id);
+        setHoverOption(Math.max(0, index));
         // Scroll management
         const refD = dropdownRef.current// Shortcut scrollable element
         const refO = optionsRef.current[index]// Shortcut hovered option element
@@ -159,59 +165,89 @@ const FormSearchAutocomplete = ({ placeholder, value, setValue }) => {
         else if ((refO?.offsetTop + refO?.offsetHeight) > (refD?.scrollTop + refD?.offsetHeight))// Bottom
             refD.scrollTop = refO.offsetTop + refO.offsetHeight - refD.offsetHeight
     }
+    
+    /**
+     * Valid form
+     */
+    const onClick = () => {
+        if( coord.length !== 2) return setFieldError(t('ui.form-postcode.errors.invalid-position'))
+        onSubmit({
+            label: search,
+            coordinates: coord,
+        })
+    }
 
     /**
      * Render
      */
     return (
-        <div className="relative z-10">
-            <div className="input-group flex-grow-1">
-                <label htmlFor="search" className="input-group-icon">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 20C15.9706 20 20 15.9706 20 11C20 6.02944 15.9706 2 11 2C6.02944 2 2 6.02944 2 11C2 15.9706 6.02944 20 11 20Z" stroke="#ACACAC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M18.9299 20.6898C19.4599 22.2898 20.6699 22.4498 21.5999 21.0498C22.4499 19.7698 21.8899 18.7198 20.3499 18.7198C19.2099 18.7098 18.5699 19.5998 18.9299 20.6898Z" stroke="#ACACAC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </label>
-                <input 
-                    type="text"
-                    id="search"
-                    className="form-control"
-                    placeholder={placeholder}
-                    autoComplete="do-not-autofill" 
-                    ref={searchRef}
-                    value={search}
-                    onChange={updateSearch}
-                    onFocus={openDropdown}
-                    onKeyDown={manageKeyboard}
-                />
+        <form className="relative">
+            <div className="flex flex-col sm:flex-row w-full gap-6 sm:gap-0">
+                <div className="relative  w-full">
+                    <div className="relative w-full">
+                        <label htmlFor="search" className="absolute inset-y-0 left-0 flex justify-center items-center px-8">
+                            <svg className="w-6 h-6 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path className="stroke-current" d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M22 22L19 19" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </label>
+                        <input 
+                            type="text"
+                            id="search"
+                            className="w-full h-20 px-24 bg-white shadow-form"
+                            placeholder={t('ui.form-postcode.placeholder')}
+                            autoComplete="do-not-autofill" 
+                            ref={searchRef}
+                            value={search}
+                            onChange={updateSearch}
+                            onFocus={openDropdown}
+                            onBlur={closeDropdown}
+                            onKeyDown={manageKeyboard}
+                        />
+                        <button 
+                            className={`absolute inset-y-0 right-0 flex justify-end items-center px-8`}
+                            onClick={getGeolocation}
+                        >
+                            <svg className={`w-7 h-7 stroke-current ${geolocationPending ? 'text-blue-500 animate-ping' : geolocation ? 'text-green-500' : geolocationError ? 'text-red-500' : 'text-slate-500'}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path className="stroke-current" d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5Z" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M12 4V2" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M4 12H2" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M12 20V22" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path className="stroke-current" d="M20 12H22" stroke="#292D32" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    {dropdown && options.length > 0 && (
+                        <ul className="absolute top-full right-0 left-0 overflow-y-auto scrollbar max-h-40 flex flex-col bg-white shadow-md" ref={dropdownRef}>
+                            {options.map((option, index) => (
+                                <li key={`address-option-${index}`}>
+                                    <button 
+                                        className={`w-full px-[40px] py-4 text-left cursor-pointer ${index === hoverOption ? 'bg-gray-100' : '' }`}
+                                        tabIndex="-1"
+                                        ref={(el) => optionsRef.current[index] = el}
+                                        onClick={() => selectOption(option)}
+                                        onMouseEnter={() => setHoverOption(index)}
+                                        onMouseLeave={() => setHoverOption(-1)}
+                                    >
+                                        {option.label}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
                 <button 
-                    className={`input-group-button ${geolocationPending ? 'text-blue-500 animate-pulse' : geolocation ? 'text-green-500' : 'text-slate-500'}`}
-                    onClick={getGeolocation}
+                    className="h-20 shrink-0 px-12 bg-primary-500 hover:bg-primary-600 text-center text-white transition-colors duration-300 ease-in-out"
+                    onClick={onClick}
                 >
-                    <svg className="w-7 h-7 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 160C202.98 160 160 202.98 160 256S202.98 352 256 352S352 309.019 352 256S309.02 160 256 160ZM256 336C211.889 336 176 300.113 176 256S211.889 176 256 176C300.113 176 336 211.887 336 256S300.113 336 256 336ZM504 248H448C447.846 248 447.756 248.156 447.604 248.164C443.566 148.406 363.596 68.433 263.836 64.398C263.844 64.242 264 64.156 264 64V8C264 3.594 260.422 0 256 0S248 3.594 248 8V64C248 64.156 248.156 64.242 248.164 64.398C148.404 68.433 68.434 148.406 64.396 248.164C64.244 248.156 64.154 248 64 248H8C3.578 248 0 251.594 0 256S3.578 264 8 264H64C64.154 264 64.244 263.844 64.396 263.836C68.434 363.594 148.404 443.566 248.164 447.601C248.156 447.758 248 447.844 248 448V504C248 508.406 251.578 512 256 512S264 508.406 264 504V448C264 447.844 263.844 447.758 263.836 447.601C363.596 443.566 443.566 363.594 447.604 263.836C447.756 263.844 447.846 264 448 264H504C508.422 264 512 260.406 512 256S508.422 248 504 248ZM256 432C158.953 432 80 353.047 80 256S158.953 80 256 80S432 158.953 432 256S353.047 432 256 432Z"/></svg>
+                    {t('ui.form-postcode.button')}
                 </button>
             </div>
-            {dropdown && options.length > 0 && (
-                <ul className="absolute top-full right-0 left-0 overflow-y-auto scrollbar max-h-40 flex flex-col bg-white shadow-md" ref={dropdownRef}>
-                    {options.map((option, index) => (
-                        <li key={`address-option-${index}`}>
-                            <button 
-                                className={`w-full px-[40px] py-4 text-left cursor-pointer ${option.id === hoverOption ? 'bg-gray-100' : '' }`}
-                                tabIndex="-1"
-                                ref={(el) => optionsRef.current[index] = el}
-                                onClick={() => selectOption(option)}
-                                onMouseEnter={() => setHoverOption(option.id)}
-                                onMouseLeave={() => setHoverOption('')}
-                            >
-                                {option.properties.label}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-            {dropdown && apiError && (
-                <div className="absolute top-full right-0 left-0 px-[40px] py-4 bg-white shadow-md text-secondary-500 text-center">
-                    Une erreur sur le serveur Géoportail nous empêche de vérifier l&apos;adresse
-                </div>
-            )}
-        </div>
+            <div className="flex items-center h-16 text-red-500 font-light text-lg">
+                {fieldError}
+            </div>
+        </form>
     )
 }
 export default FormSearchAutocomplete

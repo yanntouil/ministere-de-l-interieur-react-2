@@ -62,9 +62,9 @@ const FormPostcode = ({ onSubmit }) => {
         const postcode = target.value.trim().match(/(\d{4})/g)
         if (postcode) {
             try {
-                // const res2 = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&layer=Adresse&query=${postcode[0]}`)
-                // const data2 = await res2.json()
-                // console.log(data2.features)
+                const res2 = await fetch(`https://apiv3.geoportail.lu/fulltextsearch?limit=5&layer=Adresse&query=${postcode[0]}`)
+                const data2 = await res2.json()
+                console.log(data2.features)
                 const res = await fetch(`https://apiv3.geoportail.lu/geocode/search?zip=${postcode[0]}`)
                 const data = await res.json()
                 if (data.results.length === 0) {
