@@ -21,15 +21,15 @@ const ProfileCardHome = ({ profile, displayOnMap }) => {
      * Render
      */
     return (
-        <article className="grid grid-cols-1 lg:grid-cols-1 xl:grid-flow-col xl:grid-cols-auto bg-white shadow-md">
-            <div className="aspect-video lg:aspect-video xl:aspect-auto">
+        <article className="flex flex-col xl:flex-row bg-white shadow-md">
+            <div className="flex items-stretch w-full shrink-0 overflow-y-hidden aspect-video xl:aspect-auto xl:w-72">
                 <img
                     src={profile.image} 
                     alt={profile.name} 
                     className="object-cover w-full h-full"
                 />
             </div>
-            <div className="relative xl:w-[24rem] 2xl:w-[29rem] py-6 xl:py-2 px-8 font-light text-neutral-500">
+            <div className="relative py-6 xl:py-2 px-8 font-light text-neutral-500">
                 <div className="flex flex-col gap-1 mb-4">
                     <h2 className="text-[22px] font-medium text-neutral-800 pr-4 cursor-pointer" onClick={displayOnMap}>{profile.name}</h2>
                     <p className="font-light">

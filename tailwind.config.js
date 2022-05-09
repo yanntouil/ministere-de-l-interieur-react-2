@@ -8,6 +8,7 @@ module.exports = {
         'primary-500': '#108DB2',
         'primary-600': '#0E7695',
         'secondary-500': '#EE7326',
+        'secondary-600': '#d15a10',
         'highlight-500': '#CE1537',
         'link-500': '#5d5d5d',
         'disabled': '#E5E5E2',

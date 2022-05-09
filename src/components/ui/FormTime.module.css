@@ -1,0 +1,21 @@
+
+
+
+.formTime {
+    -webkit-appearance: none; 
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #ACACAC;
+}
+.formTime::-webkit-calendar-picker-indicator {
+    display: none;
+}
+.formTime::-webkit-datetime-edit-fields-wrapper {
+    display: flex; justify-content: center;
+}
+.formTime::-webkit-clear-button {
+    display: none;
+}
+.formTime:disabled {
+    border: 1px solid #ACACAC;
+}

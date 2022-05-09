@@ -1,143 +1,156 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
-import { useOnClickOutside } from '../../app/hooks'
-
-
-
+import React, { useState, useRef, useContext } from "react"
+import { useOnClickOutside } from "../../app/hooks"
+import geoportailService from "../../services/geoportail"
+import { FormValidateContext } from "./FormValidate"
 
 /**
  * Form Address Autocomplete
+ * @param {{
+ *      address?: string, 
+ *      setAddress?: React.Dispatch<string>,
+ *      setError?: (error: 'api-error'|'geolocation-disabled'|'geolocation-unavailable'|'geolocation-permission-denied'|'geolocation-api-error') => {},
+ *      placeholder?: string,
+ *      name?: string,
+ *      activeGeolocation?: boolean,
+ * }} props
+ * @returns {JSX.Element}
  */
-const FormAddressAutocomplete = ({ placeholder, value, setValue }) => {
-    const [hoverOption, setHoverOption] = useState(-1)
-    
+const FormAddressAutocomplete = ({ address = '', setAddress = () => {}, setError = () => {}, placeholder = '', name = 'form-address-autocomplete' }) => {
+    const { isValid, validate } = useContext(FormValidateContext)
+
     /**
-     * Search
-     */    
-    const searchRef = useRef(null)
-     const [search, setSearch] = useState(value)
-     const [apiError, setApiError] = useState(false)
-     const updateSearch = async ({ target }) => {
-        // add lodash throttle to delay requests
-        setSearch(target.value)
-        openDropdown()
-        const queryString = encodeURIComponent(target.value)
-        const api = 'https://apiv3.geoportail.lu/fulltextsearch'
-        const limit = 10
+     * Field
+     */
+    const [ fieldValue, setFieldValue ] = useState(address)
+    const fieldRef = useRef(null)
+    const fieldChange = async ({ target }) => {
+        setFieldValue(target.value)
+        updateValue([], '')
+        setDropdown(true)
         try {
-            const res = await fetch(`${api}?limit=${limit}&layer=Adresse&query=${queryString}`)
-            const data = await res.json()
-            setOptions(data.features)
-            setApiError(false)
+            const results = await geoportailService.prefillAddress(target.value, 20)
+            setOptions(results)
+            const option = results.find(option => option.value === target.value)
+            if (option) updateValue(option.coordinates, option.value)
         } catch (error) {
-            setApiError(true)
+            setError('api-error')
         }
-        if (target.value === '') return setValue('', [])
-        const option = options.find((option) => option.properties.label === target.value)
-        if (option) setValue(option.properties.label, option.geometry.coordinates)
     }
 
-    /** 
+    const updateValue = (coordinates, address) => {
+        setAddress({ coordinates, address })
+    }
+
+    /**
      * Options
      */
-    const [ options, setOptions ] = useState([])
     const optionsRef = useRef([])
+    const [ options, setOptions ] = useState([])
     const selectOption = (option) => {
-        searchRef.current.focus()
+        setFieldValue(option.label)
+        updateValue(option.coordinates, option.value)
+        fieldRef?.current?.focus()
+        setHoveredOption(-1)
         setDropdown(false)
-        setValue(option.properties.label, option.geometry.coordinates)
-        setSearch(option.properties.label)
     }
 
     /**
      * Dropdown
      */
     const [ dropdown, setDropdown ] = useState(false)
+    const blurRef = useRef(null)
     const dropdownRef = useRef(null)
-    useOnClickOutside(dropdownRef, () => closeDropdown(false))
-    const openDropdown = () => {
-        setDropdown(true)
-    }
-    const closeDropdown = useCallback(() => {
-        setDropdown(false)
-        setOptions([])
-        const option = options.find((option) => option.properties.label === search)
-        if (option) setValue(option.properties.label, option.geometry.coordinates)
-        else setSearch('')
-    }, [options, search, setValue])
+    useOnClickOutside(blurRef, () => setDropdown(false))
 
     /**
-     * Clear value from parent component
+     * Keyboard
      */
-    useEffect(() => {
-        if (value === '') setSearch('')
-    }, [value])
-
-    /**
-     * Keyboard management
-     */
+    const [ hoveredOption, setHoveredOption ] = useState(-1)
     const manageKeyboard = (e) => {
-        if (!['Escape', 'Enter', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return
-        if (e.key === 'Escape') return closeDropdown()// Escape => Close
-        if (e.key === 'Enter') {// Enter => Select option or do nothing
-            const option = options.find((option) => option.id === hoverOption)
-            return option && selectOption(option)
+        if (!['Escape', 'Enter', 'ArrowDown', 'ArrowUp'].includes(e.key)) return
+        if (e.key === 'Escape') return setDropdown(false)
+        if (e.key === 'Enter') {
+            if (options[hoveredOption]) {
+                e.preventDefault()
+                return selectOption(options[hoveredOption])
+            } else return
         }
+        setDropdown(true)
+        // Navigation
         e.preventDefault()
-        openDropdown()
-        // Options navigation
-        let index = options.findIndex((option) => option.id === hoverOption)
+        let index = hoveredOption
         if (e.key === "ArrowDown") index = (index + 1 === options.length) ? 0 : index + 1
         else if (e.key === "ArrowUp") index = (index - 1 < 0) ? options.length -1 : index - 1
-        else if (e.key === "Home") index = 0 
-        else if (e.key === "End") index = options.length -1
-        setHoverOption(options[Math.max(0, index)].id);
-        // Scroll management
-        const refD = dropdownRef.current// Shortcut scrollable element
-        const refO = optionsRef.current[index]// Shortcut hovered option element
-        if (refO?.offsetTop < refD?.scrollTop)// Top
-            refD.scrollTop = refO.offsetTop
-        else if ((refO?.offsetTop + refO?.offsetHeight) > (refD?.scrollTop + refD?.offsetHeight))// Bottom
-            refD.scrollTop = refO.offsetTop + refO.offsetHeight - refD.offsetHeight
+        setHoveredOption(Math.max(0, index))
+        scrollTo(Math.max(0, index))
+    }
+
+    /**
+     * Scroll
+     */
+     const scrollTo = (index) => {
+        const refD = dropdownRef.current
+        const refO = optionsRef.current[index]
+        if (refO?.offsetTop < refD?.scrollTop) refD.scrollTop = refO.offsetTop
+        else if ((refO?.offsetTop + refO?.offsetHeight) > (refD?.scrollTop + refD?.offsetHeight)) refD.scrollTop = refO.offsetTop + refO.offsetHeight - refD.offsetHeight
     }
 
     /**
      * Render
      */
     return (
-        <div className="relative z-10">
+        <div 
+            className="relative flex w-full h-16 sm:h-18 xl:h-20" 
+            ref={blurRef}
+        >
             <input 
-                type="text"
-                className="form-control"
+                type="text" 
+                id={name}
+                name={name}
+                className={`grow h-full px-10 leading-4 bg-white shadow placeholder:text-neutral-400 ${validate ? (isValid ? 'shadow-green-200' : 'shadow-red-200') : ''}`}
                 placeholder={placeholder}
-                autoComplete="do-not-autofill"
-                ref={searchRef}
-                value={search}
-                onChange={updateSearch}
-                onFocus={openDropdown}
+                autoComplete="none"
+                role="combobox"
+                aria-haspopup="listbox"
+                aria-expanded={dropdown ? 'true' : 'false'}
+                aria-owns={name + '-listbox'}
+                aria-controls={name + '-listbox'}
+                aria-autocomplete="list"
+                ref={fieldRef}
                 onKeyDown={manageKeyboard}
+                onBlur={({ relatedTarget }) => !blurRef?.current?.contains(relatedTarget) && setDropdown(false)}
+                value={fieldValue}
+                onChange={fieldChange}
+                onFocus={() => setDropdown(true)}
             />
-            {dropdown && options.length > 0 && (
-                <ul className="absolute top-full right-0 left-0 overflow-y-auto scrollbar max-h-40 flex flex-col bg-white shadow-md" ref={dropdownRef}>
-                    {options.map((option, index) => (
-                        <li key={`address-option-${index}`}>
-                            <button 
-                                className={`w-full px-[40px] py-4 text-left cursor-pointer ${option.id === hoverOption ? 'bg-gray-100' : '' }`}
-                                tabIndex="-1"
-                                ref={(el) => optionsRef.current[index] = el}
-                                onClick={() => selectOption(option)}
-                                onMouseEnter={() => setHoverOption(option.id)}
-                                onMouseLeave={() => setHoverOption('')}
-                            >
-                                {option.properties.label}
-                            </button>
+            {dropdown && (
+                <ul 
+                    className="absolute z-20 top-full inset-x-0 max-h-48 overflow-y-auto scrollbar bg-white shadow-md"
+                    role="listbox"
+                    id={name + '-listbox'}
+                    ref={dropdownRef}
+                >
+                    {options.map(( option, index ) => (
+                        <li 
+                            key={`${name}-${index}`}
+                            role="option"
+                            aria-selected={option.label === fieldValue ? 'true' : 'false'}
+                            className={`relative flex items-center w-full h-16 cursor-pointer ${index === hoveredOption ? 'bg-neutral-50' : '' }`}
+                            tabIndex="-1"
+                            ref={(el) => optionsRef.current[index] = el}
+                            onClick={() => selectOption(option)}
+                            onMouseEnter={() => setHoveredOption(index)}
+                            onMouseLeave={() => setHoveredOption(-1)}
+                        >
+                            <span className="hidden sm:flex justify-center items-center h-full aspect-square text-neutral-600" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path className="stroke-current" d="M12 13.4299C13.7231 13.4299 15.12 12.0331 15.12 10.3099C15.12 8.58681 13.7231 7.18994 12 7.18994C10.2769 7.18994 8.88 8.58681 8.88 10.3099C8.88 12.0331 10.2769 13.4299 12 13.4299Z" stroke="#292D32" strokeWidth="1.5"/><path className="stroke-current" d="M3.62001 8.49C5.59001 -0.169998 18.42 -0.159997 20.38 8.5C21.53 13.58 18.37 17.88 15.6 20.54C13.59 22.48 10.41 22.48 8.39001 20.54C5.63001 17.88 2.47001 13.57 3.62001 8.49Z" stroke="#292D32" strokeWidth="1.5"/></svg>
+                            </span>
+                            <span className="grow overflow-hidden pl-4 sm:pl-0 pr-4 truncate text-ellipsis text-neutral-600 leading-8 text-left font-light">
+                                {option.label}
+                            </span>
                         </li>
                     ))}
                 </ul>
-            )}
-            {dropdown && apiError && (
-                <div className="absolute top-full right-0 left-0 px-[40px] py-4 bg-white shadow-md text-secondary-500 text-center">
-                    Une erreur sur le serveur Géoportail nous empêche de vérifier l&apos;adresse
-                </div>
             )}
         </div>
     )

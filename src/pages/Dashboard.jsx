@@ -1,12 +1,19 @@
 import { useRef, useState } from "react"
 import { useTranslation } from 'react-i18next'
 import businessProfiles from "../mock/businessProfiles"
-import { ProfileCard,  ProfileForm} from "../components/ui"
 import { useEffect } from "react"
 import { disableBodyScroll, enableBodyScroll, clearScrollLocks } from "../app/helpers"
 import { useOnClickOutside } from "../app/hooks"
+import { 
+    PageHeading,
+    ProfileCard, ProfileForm, 
+    Button, 
+    Dialog, DialogBackdrop, DialogClose, DialogPannel
+} from "../components/ui"
 
-
+/**
+ * Page Dashboard
+ */
 const Dashboard = () =>  {
     const { t } = useTranslation()
     
@@ -33,6 +40,7 @@ const Dashboard = () =>  {
         setEditForm(false)
         console.log('Profile update');
     }
+
     /**
      * Delete
      */
@@ -52,33 +60,22 @@ const Dashboard = () =>  {
         return () => clearScrollLocks()
     }, [ editForm, addForm, deleteValidation ])
 
-
     /**
      * Render
      */
     return (
-        <div className="page-dashboard">
-            <div className="container-2xl">
-                <div className="page-header">
-                    <h1 className="page-header-title">
-                        {t('pages.dashboard.page-title')}
-                    </h1>
-                    <p className="page-header-secondary">
-                        {t('pages.dashboard.page-secondary')}
-                    </p>
-                </div>
-            </div>
-            <div className="bg-white">
-                <div className="container-2xl relative">
-                    <div className="page-action">
-                        <button 
-                            className="btn btn-primary"
-                            onClick={() => addProfile()}
-                        >
+        <>
+            <section className="container px-8 sm:px-0 mx-auto py-24">
+                <PageHeading title={t('pages.dashboard.page-title')} secondary={t('pages.dashboard.page-secondary')} />
+            </section>
+            <section className="bg-white">
+                <div className="container px-8 sm:px-0 mx-auto">
+                    <div className="relative">
+                        <Button onClick={() => addProfile()} className="absolute top-0 left-0 -translate-y-1/2">
                             {t('pages.dashboard.button-add')}
-                        </button>
+                        </Button>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-2 py-[100px] gap-[50px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-2 py-24 gap-12">
                         {businessProfiles.map((profile, index) => (
                             <ProfileCard
                                 key={`profile-${profile.id}`}
@@ -90,50 +87,45 @@ const Dashboard = () =>  {
                         ))}
                     </div>    
                 </div>
-            </div>
-            {addForm && (
-                <ProfileForm 
-                    close={() => setAddForm(false)}
-                    save={saveAddProfile}
-                />
-            )}
-            {editForm && (
-                <ProfileForm 
-                    close={() => setEditForm(false)}
-                    save={saveEditProfile}
-                    profile={editForm}
-                />
-            )}
-            {deleteValidation && (
-                <>
-                    <div className="fixed inset-0 bg-black/60" />
-                    <div className="fixed inset-0 flex justify-center items-center">
-                        <div 
-                            className="flex flex-col max-w-2xl bg-white shadow m-[20px] sm:m-[50px] p-[20px] sm:p-[50px] gap-[20px] sm:gap-[50px]"
-                            ref={deleteValidationRef}   
-                        >
-                            <div className="text-lg">
-                                {t('pages.dashboard.delete-message')}
-                            </div>
-                            <div className="flex justify-end gap-[20px] sm:gap-[50px]">
-                                <button 
-                                    className="btn btn-danger"
-                                    onClick={() => setDeleteValidation(false)}
-                                >
-                                    {t('pages.dashboard.delete-cancel')}
-                                </button>
-                                <button 
-                                    className="btn btn-primary"
-                                    onClick={() => confirmDelete()}
-                                >
-                                    {t('pages.dashboard.delete-valid')}
-                                </button>
-                            </div>
-                        </div>
+            </section>
+            <Dialog onClose={() => setAddForm(false)} open={addForm}>
+                <DialogBackdrop />
+                <DialogPannel>
+                    <DialogClose sr={t('ui.profile-form.close')} />
+                    <ProfileForm 
+                        close={() => setAddForm(false)}
+                        save={saveAddProfile}
+                    />
+                </DialogPannel>
+            </Dialog>
+            <Dialog onClose={() => setEditForm(false)} open={editForm}>
+                <DialogBackdrop />
+                <DialogPannel>
+                    <DialogClose sr={t('ui.profile-form.close')} />
+                    <ProfileForm 
+                        close={() => setEditForm(false)}
+                        save={saveEditProfile}
+                        profile={editForm}
+                    />
+                </DialogPannel>
+            </Dialog>
+            <Dialog OnClickOutside={() => setDeleteValidation(false)} open={deleteValidation}>
+                <DialogBackdrop />
+                <DialogPannel className="max-w-2xl bg-white flex flex-col items-center gap-12" center>
+                    <div className="text-lg">
+                        {t('pages.dashboard.delete-message')}
                     </div>
-                </>
-            )}
-        </div>
+                    <div className="flex justify-end gap-[20px] sm:gap-[50px]">
+                        <Button onClick={() => setDeleteValidation(false)} danger>
+                            {t('pages.dashboard.delete-cancel')}
+                        </Button>
+                        <Button onClick={() => confirmDelete()}>
+                            {t('pages.dashboard.delete-valid')}
+                        </Button>
+                    </div>
+                </DialogPannel>
+            </Dialog>
+        </>
     )
 }
 

@@ -4,6 +4,10 @@ import { useMedia } from '../../app/hooks'
 import { weekDays } from "../../app/helpers"
 import { FormCheckbox, FormText, FormToggle, FormValidate, FormAddressAutocomplete } from './'
 import { useTranslation } from 'react-i18next'
+import PageHeading from './PageHeading'
+import FormHeading from './FormHeading'
+import FormTime from './FormTime'
+import { Button } from './Button'
 
 
 
@@ -96,199 +100,109 @@ const ProfileForm = ({ profile = initialProfile, close, save }) => {
      * Render
      */
     return (
-        <div className="fixed inset-0 z-50">
-            <div className="fixed inset-0 bg-black/60" />
-            <div className="absolute inset-0 overflow-y-auto flex justify-center items-start">
-                <div className="w-full max-w-screen-2xl mx-auto px-0 sm:px-[40px] xl:px-[50px] 2xl:px-0 py-0 sm:py-[50px]">
-                    <div className="relative bg-background py-[20px] sm:py-[50px] px-[20px] sm:px-[50px]">
-                        <button 
-                            className="absolute top-[20px] sm:top-[50px] right-[20px] sm:right-[50px] btn btn-primary btn-icon"
-                            onClick={close}
-                        >
-                            <svg aria-hidden="true" className="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M315.31 411.31C309.056 417.563 298.936 417.563 292.682 411.31L160 278.627L27.318 411.31C21.064 417.563 10.944 417.563 4.69 411.31C-1.563 405.056 -1.563 394.936 4.69 388.682L137.373 256L4.69 123.318C-1.563 117.064 -1.563 106.944 4.69 100.69C10.944 94.437 21.064 94.437 27.318 100.69L160 233.373L292.682 100.69C298.936 94.437 309.056 94.437 315.31 100.69C321.563 106.944 321.563 117.064 315.31 123.318L182.627 256L315.31 388.682C321.563 394.936 321.563 405.056 315.31 411.31Z"/></svg>                        
-                            <span className="sr-only">{t('ui.profile-form.close')}</span>
-                        </button>
-                        <div className="page-header">
-                            <h1 className="page-header-title">
-                                {t('ui.profile-form.title-1')} <span className="page-header-highlight">{t('ui.profile-form.title-2')}</span><br />
-                                {t('ui.profile-form.title-3')}
-                            </h1>
-                            <p className="page-header-secondary">
-                                {t('ui.profile-form.secondary')}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="relative bg-white px-[20px] sm:px-[100px]">
-                        <div className="page-action relative" aria-hidden="true">
-                            <span className="btn btn-primary btn-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
-                                    <g transform="translate(213 -620) rotate(90)">
-                                        <g transform="translate(620 188)">
-                                            <path d="M0,0,6.323,6.323,0,12.646" transform="translate(15.031 6.177)" fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
-                                            <path d="M0,0H17.531" transform="translate(3.646 12.5)" fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
-                                            <path d="M0,0H25V25H0Z" transform="translate(25 25) rotate(180)" fill="none" opacity="0"/>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </span>
-                        </div>
-                        <form className="relative flex flex-col gap-[20px] sm:gap-[50px]" onSubmit={onSubmit}>
-                            <div className="form-heading pt-[50px] sm:pt-[100px]">
-                                {t('ui.profile-form.business-title')}
-                            </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-1 gap-[20px] sm:gap-[50px]">
-                                <div className="col-span-6">
-                                    <FormValidate 
-                                        isValid={formValidator.name()}
-                                        validate={validate}
-                                        message={t('ui.profile-form.business-name-validation')}
-                                    >
-                                        <FormText 
-                                            placeholder={t('ui.profile-form.business-name') + '*'}
-                                            autoComplete="do-not-autofill"
-                                            value={formData.name}
-                                            onChange={({ target }) => setFormData({ ...formData, name: target.value })}
-                                        />
-                                    </FormValidate>
+        <>
+            <section className="bg-background py-20 sm:py-24 px-8 sm:px-12">
+                <PageHeading title={(
+                    <>
+                        {t('ui.profile-form.title-1')} <span className="page-header-highlight">{t('ui.profile-form.title-2')}</span><br />
+                        {t('ui.profile-form.title-3')}
+                    </>
+                )} secondary={t('ui.profile-form.secondary')} />
+            </section>
+            <section className="bg-white px-8 sm:px-12">
+                <form className="relative flex flex-col pt-20 sm:pt-24 pb-8 sm:pb-12 gap-10 sm:gap-12" onSubmit={onSubmit}>
+                    <span className="absolute top-0 left-0 -translate-y-1/2 flex justify-center items-center h-16 sm:h-18 xl:h-20 aspect-square shrink-0 bg-primary-500 text-white" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25"><g transform="translate(213 -620) rotate(90)"><g transform="translate(620 188)"><path className="stroke-current" d="M0,0,6.323,6.323,0,12.646" transform="translate(15.031 6.177)" fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/><path className="stroke-current" d="M0,0H17.531" transform="translate(3.646 12.5)" fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/><path className="stroke-current" d="M0,0H25V25H0Z" transform="translate(25 25) rotate(180)" fill="none" opacity="0"/></g></g></svg>
+                    </span>
+                    <FormHeading>{t('ui.profile-form.business-title')}</FormHeading>
+                    <FormValidate isValid={formValidator.name()} validate={validate} message={t('ui.profile-form.business-name-validation')}>
+                        <FormText 
+                            placeholder={t('ui.profile-form.business-name') + '*'}
+                            value={formData.name}
+                            setValue={(value) => setFormData({ ...formData, name: value })}
+                        />
+                    </FormValidate>
+                    <FormValidate isValid={formValidator.address()} validate={validate} message={t('ui.profile-form.business-address-validation')}>
+                        <FormAddressAutocomplete 
+                            placeholder={t('ui.profile-form.business-address') + '*'}
+                            value={formData.address}
+                            setValue={(address, coordinates) => setFormData({ ...formData, address, coordinates })}
+                        />
+                    </FormValidate>
+                    <FormHeading className="pt-8 sm:pt-12">{t('ui.profile-form.contact-title')}</FormHeading>
+                    <FormValidate isValid={formValidator.email()} validate={validate} message={t('ui.profile-form.contact-email-validation')}>
+                        <FormText 
+                            placeholder={t('ui.profile-form.contact-email') + '*'}
+                            value={formData.email}
+                            setValue={(value) => setFormData({ ...formData, email: value })}
+                        />
+                    </FormValidate>
+                    <FormValidate isValid={formValidator.phone()} validate={validate} message={t('ui.profile-form.contact-phone-validation')}>
+                        <FormText 
+                            placeholder={t('ui.profile-form.contact-phone') + '*'}
+                            value={formData.phone}
+                            setValue={(value) => setFormData({ ...formData, phone: value })}
+                        />
+                    </FormValidate>
+                    <FormValidate isValid={formValidator.website()} validate={validate} message={t('ui.profile-form.contact-website-validation')}>
+                        <FormText 
+                            placeholder={t('ui.profile-form.contact-website')}
+                            value={formData.website}
+                            setValue={(value) => setFormData({ ...formData, website: value })}
+                        />
+                    </FormValidate>
+                    <FormHeading className="pt-6 sm:pt-12">{t('ui.profile-form.planning-title')}</FormHeading>
+                    <FormToggle 
+                        label={t('ui.profile-form.planning-same-time')}
+                        value={planningAll}
+                        onChange={() => setPlanningAll(!planningAll)}
+                    />
+                    <div className="flex flex-col gap-12 sm:px-10">
+                        {weekDays.map((day, index) => (
+                            <div className="flex justify-end flex-wrap gap-x-12 gap-y-6" key={`planning-${index}`}>
+                                <label className="flex items-center min-w-[200px] grow gap-5">
+                                    <FormCheckbox 
+                                        value={formData.planning[day].active}
+                                        disabled={formData.planningDisabled}
+                                        onChange={() => updatePlanning(day, { active: !formData.planning[day].active})}
+                                    />
+                                    {t('ui.' + day)}
+                                </label>
+                                <div className={`flex items-center gap-8 font-light ${planningIsDisable(day) ? ' text-neutral-400' : ''}`}>
+                                    <FormTime 
+                                        disabled={planningIsDisable(day)}
+                                        value={formData.planning[day].morningFrom}
+                                        onChange={(value) => updatePlanning(day, { morningFrom: value })}
+                                    />
+                                    {t('ui.profile-form.planning-to')}
+                                    <FormTime 
+                                        disabled={planningIsDisable(day)}
+                                        value={formData.planning[day].morningTo}
+                                        onChange={(value) => updatePlanning(day, { morningTo: value })}
+                                    />
                                 </div>
-                                <div className="col-span-6 col-start-1">
-                                    <FormValidate 
-                                        isValid={formValidator.address()}
-                                        validate={validate}
-                                        message={t('ui.profile-form.business-address-validation')}
-                                    >
-                                        <FormAddressAutocomplete 
-                                            placeholder={t('ui.profile-form.business-address') + '*'}
-                                            value={formData.address}
-                                            setValue={(address, coordinates) => setFormData({ ...formData, address, coordinates })}
-                                        />
-                                    </FormValidate>
-                                </div>
-                            </div>
-                            <div className="form-heading pt-[25px] sm:pt-[50px]">
-                                {t('ui.profile-form.contact-title')}
-                            </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-1 gap-[25px] sm:gap-[50px]">
-                                <div className="col-start-1">
-                                    <FormValidate 
-                                        isValid={formValidator.email()}
-                                        validate={validate}
-                                        message={t('ui.profile-form.contact-email-validation')}
-                                    >
-                                        <FormText 
-                                            placeholder={t('ui.profile-form.contact-email') + '*'}
-                                            value={formData.email}
-                                            onChange={({ target }) => setFormData({ ...formData, email: target.value })}
-                                        />
-                                    </FormValidate>
-                                </div>
-                                <div className="col-start-1">
-                                    <FormValidate 
-                                        isValid={formValidator.phone()}
-                                        validate={validate}
-                                        message={t('ui.profile-form.contact-phone-validation')}
-                                    >
-                                        <FormText 
-                                            placeholder={t('ui.profile-form.contact-phone') + '*'}
-                                            value={formData.phone}
-                                            onChange={({ target }) => setFormData({ ...formData, phone: target.value })}
-                                        />
-                                    </FormValidate>
-                                </div>
-                                <div className="col-start-1">
-                                    <FormValidate 
-                                        isValid={formValidator.website()}
-                                        validate={validate}
-                                        message={t('ui.profile-form.contact-website-validation')}
-                                    >
-                                        <FormText 
-                                            placeholder={t('ui.profile-form.contact-website')}
-                                            value={formData.website}
-                                            onChange={({ target }) => setFormData({ ...formData, website: target.value })}
-                                        />
-                                    </FormValidate>
-                                </div>
-                            </div>
-                            <div className="form-heading pt-[25px] sm:pt-[50px]">
-                                {t('ui.profile-form.planning-title')}
-                            </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-1 gap-[25px] sm:gap-[50px]">
-                                <div className="col-start-1">
-                                    <FormToggle 
-                                        label={t('ui.profile-form.planning-same-time')}
-                                        value={planningAll}
-                                        onChange={() => setPlanningAll(!planningAll)}
+                                <div className={`flex items-center gap-8 font-light ${planningIsDisable(day) ? ' text-neutral-400' : ''}`}>
+                                    <FormTime 
+                                        disabled={planningIsDisable(day)}
+                                        value={formData.planning[day].eveningFrom}
+                                        onChange={(value) => updatePlanning(day, { eveningFrom: value })}
+                                    />
+                                    {t('ui.profile-form.planning-to')}
+                                    <FormTime 
+                                        disabled={planningIsDisable(day)}
+                                        value={formData.planning[day].eveningTo}
+                                        onChange={(value) => updatePlanning(day, { eveningTo: value })}
                                     />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-1 gap-[50px]">
-                                <div className="flex flex-col gap-[30px] sm:px-[40px]">
-                                    {weekDays.map((day, index) => (
-                                        <div
-                                            key={`form-planning-${index}`} 
-                                            className="flex flex-wrap justify-end gap-x-[75px] gap-y-[15px]" style={{gridTemplateColumns: media.min('lg') ? '1fr auto auto auto auto auto auto auto' : '1fr auto auto auto'}}
-                                        >
-                                            <div 
-                                                className={`flex-grow min-w-[150px] flex items-center gap-5${planningIsDisable(day) ? ' text-disabled' : ''}`} 
-                                                onClick={() => !formData.planningDisabled && updatePlanning(day, { active: !formData.planning[day].active})}
-                                            >
-                                                <FormCheckbox 
-                                                    value={formData.planning[day].active}
-                                                    disabled={formData.planningDisabled}
-                                                    onChange={() => updatePlanning(day, { active: !formData.planning[day].active})}
-                                                />
-                                                {t('ui.' + day)}
-                                            </div>
-                                            <div className="flex gap-[30px]">
-                                                <input 
-                                                    type="time" 
-                                                    className="form-time"
-                                                    disabled={planningIsDisable(day)}
-                                                    value={formData.planning[day].morningFrom}
-                                                    onChange={({ target }) => updatePlanning(day, { morningFrom: target.value })}
-                                                />
-                                                <div className={`flex justify-center items-center font-light${planningIsDisable(day) ? ' text-disabled' : ''}`}>
-                                                {t('ui.profile-form.planning-to')}
-                                                </div>
-                                                <input 
-                                                    type="time" 
-                                                    className="form-time"
-                                                    disabled={planningIsDisable(day)}
-                                                    value={formData.planning[day].morningTo}
-                                                    onChange={({ target }) => updatePlanning(day, { morningTo: target.value })}
-                                                />
-                                            </div>
-                                            <div className="flex gap-[30px]">
-                                                <input 
-                                                    type="time" 
-                                                    className="form-time"
-                                                    disabled={planningIsDisable(day)}
-                                                    value={formData.planning[day].eveningFrom}
-                                                    onChange={({ target }) => updatePlanning(day, { eveningFrom: target.value })}
-                                                />
-                                                <div className={`flex justify-center items-center font-light${planningIsDisable(day) ? ' text-disabled' : ''}`}>
-                                                    {t('ui.profile-form.planning-to')}
-                                                </div>
-                                                <input 
-                                                    type="time" 
-                                                    className="form-time"
-                                                    disabled={planningIsDisable(day)}
-                                                    value={formData.planning[day].eveningTo}
-                                                    onChange={({ target }) => updatePlanning(day, { eveningTo: target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="form-submit sm:justify-end my-[50px]">
-                                <button type="submit" className="btn btn-primary">{t('ui.profile-form.valid')}</button>
-                            </div>
-                        </form>
+                        ))}
                     </div>
-                </div>
-            </div>
-        </div>
+                    <div className="form-submit sm:justify-end mt-12">
+                        <Button type="submit">{t('ui.profile-form.valid')}</Button>
+                    </div>
+                </form>
+            </section>
+        </>
     )
 }
 
