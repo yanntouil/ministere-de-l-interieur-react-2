@@ -105,7 +105,7 @@ export default function Home({ profiles = businessProfiles}) {
                         placeholder={t('ui.form-postcode.placeholder')}
                     />
                 </div>
-                <div className="relative z-10 flex items-stretch aspect-[16/6] lg:aspect-3/4 overflow-y-hidden">
+                <div className="lg:relative lg:z-10 flex items-stretch aspect-[16/6] lg:aspect-3/4 overflow-y-hidden">
                     <img className="object-cover grow" src="/images/home.jpg" alt="Say yes" />
                 </div>
             </section>

@@ -154,7 +154,7 @@ const FormLocationAutocomplete = ({ location = '', setLocation = () => {}, setEr
      * Render
      */
     return (
-        <form className="lg:relative z-20 flex flex-wrap h-16 sm:h-18 xl:h-20 gap-y-8" onSubmit={beforeSubmit}>
+        <form className="lg:relative lg:z-20 flex flex-wrap h-16 sm:h-18 xl:h-20 gap-y-8" onSubmit={beforeSubmit}>
             <div 
                 className="relative flex grow h-full" 
                 ref={blurRef}
