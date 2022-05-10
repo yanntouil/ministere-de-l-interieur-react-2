@@ -43,7 +43,7 @@ const translation = {
             'placeholder': "Saisir un code postal pour trouver des lieux",
             'button': "Allons-y !",
             'errors': {
-                'service-unavailable': "Le service de localisation n'est pa disponible",
+                'geolocation-unavailable': "Le service de localisation n'est pa disponible",
                 'position-unavailable': "Nous n'avons pas réussi à établir votre position",
                 'permission-denied': "La demande de géolocalisation a été refusé",
                 'api-error': "Une erreur sur le serveur Géoportail nous empêche de vérifier le code postal",

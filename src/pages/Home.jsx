@@ -31,6 +31,7 @@ export default function Home({ profiles = businessProfiles}) {
         label: '',
         coordinates: [],
     })
+    const [ searchError, setSearchError ] = useState('')
 
     /**
      * Maps
@@ -101,17 +102,25 @@ export default function Home({ profiles = businessProfiles}) {
                     </div>
                     <FormLocationAutocomplete
                         onSubmit={setSearch}
+                        setError={setSearchError}
                         submitLabel={t('ui.form-postcode.button')}
                         placeholder={t('ui.form-postcode.placeholder')}
                     />
+                    <div className="relative mt-12 sm:-mt-24">
+                        {searchError && (
+                            <div className="absolute flex items-center h-20 text-lg font-light text-red-500">
+                                {t('ui.form-postcode.errors.' + searchError)}
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="lg:relative lg:z-10 flex items-stretch aspect-[16/6] lg:aspect-3/4 overflow-y-hidden">
                     <img className="object-cover grow" src="/images/home.jpg" alt="Say yes" />
                 </div>
             </section>
             {search.coordinates.length === 2 ? (
-                <section className="relative bg-white -mt-48">
-                    <div className="container grid xl:grid-cols-2 px-8 sm:px-0 mx-auto pt-48 pb-24 gap-y-8 sm:gap-x-24">
+                <section className="relative bg-white lg:-mt-48">
+                    <div className="container grid xl:grid-cols-2 px-8 sm:px-0 mx-auto pt-16 lg:pt-48 pb-24 gap-y-8 sm:gap-x-24">
                         <div>
                             <div className="flex gap-4 pb-12 flex-wrap sm:flex-nowrap">
                                 <h2 className="flex items-center w-full sm:w-auto text-3xl xl:text-2xl 2xl:text-4xl font-bold">{t('pages.home.result-title')}</h2>

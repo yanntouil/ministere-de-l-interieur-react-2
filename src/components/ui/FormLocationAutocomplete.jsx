@@ -27,6 +27,7 @@ const FormLocationAutocomplete = ({ location = '', setLocation = () => {}, setEr
         setFieldValue(target.value)
         updateValue([], '')
         setGeolocation('off')
+        setError('')
         openDropdown()
         try {
             let results = []
@@ -125,22 +126,23 @@ const FormLocationAutocomplete = ({ location = '', setLocation = () => {}, setEr
     const [ geolocation, setGeolocation ] = useState('off') 
     const geolocationError = (error) => {
         setGeolocation(error)
-        setError('geolocation-' + error)
+        setError(error)
     }
     const onClickGeolocation = () => {
+        setError('')
         setGeolocation('pending')
-        if (!('geolocation' in navigator)) return geolocationError('disabled')
+        if (!('geolocation' in navigator)) return geolocationError('geolocation-unavailable')
         navigator.geolocation.getCurrentPosition(async ({ coords }) => {
             try {
                 const location = await geoportailService.coordsAddress(coords)
-                if (!location) return geolocationError('unavailable')
+                if (!location) return geolocationError('position-unavailable')
                 setGeolocation('on')
                 setFieldValue(location.address)
                 updateValue(location.coordinates, location.address)
             } catch (error) {
                 geolocationError('api-error')
             }
-        }, (error) => geolocationError(error.code === 1 ? 'permission-denied' : 'unavailable'))
+        }, (error) => geolocationError(error.code === 1 ? 'permission-denied' : 'geolocation-unavailable'))
     }
     /**
      * Before submit
@@ -194,7 +196,7 @@ const FormLocationAutocomplete = ({ location = '', setLocation = () => {}, setEr
                         onFocus={closeDropdown}
                     >
                         <span 
-                            className={`${(geolocation === 'pendding') ? 'text-primary-500 animate-pulse' : (geolocation === 'off') ? 'text-neutral-500' : (geolocation === 'on') ? 'text-green-500' : 'text-red-500'}`}
+                            className={`${(geolocation === 'pending') ? 'text-primary-500 animate-pulse' : (geolocation === 'off') ? 'text-neutral-500' : (geolocation === 'on') ? 'text-green-500' : 'text-red-500'}`}
                             aria-hidden="true"
                         >
                             {(geolocation === 'disabled' || geolocation === 'permission-denied') ? (

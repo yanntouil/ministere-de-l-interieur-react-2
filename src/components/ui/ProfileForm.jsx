@@ -57,9 +57,9 @@ const ProfileForm = ({ profile = initialProfile, close, save }) => {
     /**
      * Planning
      */
-    const updatePlanning = (day, data) => {
+    const updatePlanning = (day, data, disable = false) => {
         const newFormData = { ...formData }
-        if (planningAll) weekDays.forEach(weekday => newFormData.planning[weekday] = { ...newFormData.planning[weekday], ...data})
+        if (planningAll && !disable) weekDays.forEach(weekday => newFormData.planning[weekday] = { ...newFormData.planning[weekday], ...data})
         else newFormData.planning[day] = { ...newFormData.planning[day], ...data}
         setFormData(newFormData)
     }
@@ -164,7 +164,7 @@ const ProfileForm = ({ profile = initialProfile, close, save }) => {
                                     <FormCheckbox 
                                         value={formData.planning[day].active}
                                         disabled={formData.planningDisabled}
-                                        onChange={() => updatePlanning(day, { active: !formData.planning[day].active})}
+                                        onChange={() => updatePlanning(day, { active: !formData.planning[day].active}, true)}
                                     />
                                     {t('ui.' + day)}
                                 </label>

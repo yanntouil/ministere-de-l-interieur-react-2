@@ -21,8 +21,8 @@ const ProfileCardHome = ({ profile, displayOnMap }) => {
      * Render
      */
     return (
-        <article className="flex flex-col xl:flex-row bg-white shadow-md">
-            <div className="flex items-stretch w-full shrink-0 overflow-y-hidden aspect-video xl:aspect-auto xl:w-72">
+        <article className="flex flex-col     md:flex-row    lg:flex-col    xl:flex-row    bg-white shadow-md">
+            <div className="flex items-stretch shrink-0 overflow-y-hidden      w-full aspect-video       md:xl:aspect-auto md:w-72       lg:w-full lg:aspect-video      xl:aspect-auto xl:w-72">
                 <img
                     src={profile.image} 
                     alt={profile.name} 

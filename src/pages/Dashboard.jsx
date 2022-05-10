@@ -111,7 +111,7 @@ const Dashboard = () =>  {
             </Dialog>
             <Dialog OnClickOutside={() => setDeleteValidation(false)} open={deleteValidation}>
                 <DialogBackdrop />
-                <DialogPannel className="max-w-2xl bg-white flex flex-col items-center gap-12" center>
+                <DialogPannel className="max-w-2xl bg-white flex flex-col items-center gap-12 px-12 py-12" center>
                     <div className="text-lg">
                         {t('pages.dashboard.delete-message')}
                     </div>
